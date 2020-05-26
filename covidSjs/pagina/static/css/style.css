@@ -1,0 +1,45 @@
+body {
+    background-color: rgba(29, 165, 132, 0.05);
+}
+
+#titulo {
+    margin: 5% 0 5% 5%;
+}
+
+.confirmados h5{
+    color: #FF0000
+}
+
+.recuperados h5{
+    color: #30CF30
+}
+
+.suspeitos h5 {
+    color: #808000
+}
+
+.descartados {
+    margin-left: 45%;
+}
+
+.descartados h5 {
+    color: #BF40BF
+}
+
+.obitos {
+    margin-left: 10%;
+}
+
+@media only screen and (max-width: 991px) {
+    #titulo {
+        text-align: center;
+    }
+
+    .descartados {
+        margin: 0 auto;
+    }
+
+    .obitos {
+        margin: 0 auto;
+    }
+}

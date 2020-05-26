@@ -1,16 +1,81 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <title>covid sjs</title>
 </head>
 <body>
-    <p>{{ casos.data }}</p>
-    <p>Confirmados: {{ casos.confirmados }}</p>
-    <p>Recuperados: {{ casos.recuperados }}</p>
-    <p>Suspeitos: {{ casos.suspeitos }}</p>
-    <p>Descartados: {{ casos.descartados }}</p>
-    <p>Óbitos: {{ casos.obitos }}</p>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <h1 id="titulo">Casos do Covid-19 em São João do Sabugi</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card mx-auto mt-4 shadow-sm pl-2 confirmados" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">Confirmados</h5>
+                        <p class="card-text">{{ casoAtual.confirmados }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
+                        <p class="card-text">{{ casosNovos.confirmados }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card mx-auto mt-4 shadow-sm pl-2 recuperados" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">Recuperados</h5>
+                        <p class="card-text">{{ casoAtual.recuperados }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
+                        <p class="card-text">{{ casosNovos.recuperados }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card mx-auto mt-4 shadow-sm pl-2 suspeitos" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">Suspeitos</h5>
+                        <p class="card-text">{{ casoAtual.suspeitos }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
+                        <p class="card-text">{{ casosNovos.suspeitos }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-6">
+                <div class="card descartados mt-4 shadow-sm pl-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">Descartados</h5>
+                        <p class="card-text">{{ casoAtual.descartados }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
+                        <p class="card-text">{{ casosNovos.descartados }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-6">
+                <div class="card obitos mt-4 shadow-sm pl-2" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">Óbitos</h5>
+                        <p class="card-text">{{ casoAtual.obitos }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
+                        <p class="card-text">{{ casosNovos.obitos }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </body>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
 </html>
