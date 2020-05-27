@@ -9,6 +9,9 @@ from .models import casos as Casos
 def gerarDadosGraficos(casoAtual):
     primeiroCaso = Casos.objects.first()
     diferencaEmDias = (casoAtual.data - primeiroCaso.data).days + 1
+
+    # O salto serve para pegar 11 datas com espaçamento igual entre a primeira e
+    # a última data cadastrada.
     saltoEntreDatas = diferencaEmDias/10
     
     datas = []
@@ -21,31 +24,27 @@ def gerarDadosGraficos(casoAtual):
 
     datas.append(casoAtual.data)
 
+    graficoCasosConfirmados = []
+    graficoCasosRecuperados = []
+    graficoCasosSuspeitos = []
+    graficoCasosDescartados = []
+    graficoCasosObitos = []
+
     '''
-        Pega os números de 'confirmados' dos objetos que estão com as datas
-        cadastrada em 'datas' e salva na lista 'graficoCasosConfirmados'. Se o 
-        objeto com a data passada não existir, ele irá pegar o último objeto 
-        listado (por meio da lista gerada pelo '__lte') mais próximo.
+        Pega os números dos objetos que estão com as datas cadastrada em 'datas'
+        e salva nas respectivas listas. Se o objeto com a data passada não 
+        existir, ele irá pegar o último objeto listado (por meio da lista gerada
+        pelo '__lte') mais próximo.
     '''
-    graficoCasosConfirmados = [Casos.objects.filter(data__lte=data).latest().confirmados
-                                    for data in datas
-    ]
+    for data in datas:
+        casoParaAdicionar = Casos.objects.filter(data__lte=data).latest()
 
-    graficoCasosRecuperados = [Casos.objects.filter(data__lte=data).latest().recuperados
-                                    for data in datas
-    ]
-    
-    graficoCasosSuspeitos = [Casos.objects.filter(data__lte=data).latest().suspeitos
-                                    for data in datas
-    ]
+        graficoCasosConfirmados.append(casoParaAdicionar.confirmados)
+        graficoCasosRecuperados.append(casoParaAdicionar.recuperados)
+        graficoCasosSuspeitos.append(casoParaAdicionar.suspeitos)
+        graficoCasosDescartados.append(casoParaAdicionar.descartados)
+        graficoCasosObitos.append(casoParaAdicionar.obitos)
 
-    graficoCasosDescartados = [Casos.objects.filter(data__lte=data).latest().descartados
-                                    for data in datas
-    ]
-
-    graficoCasosObitos = [Casos.objects.filter(data__lte=data).latest().obitos
-                                    for data in datas
-    ]
     
     #converte as datas para string no formato dia/mes
     datas = [data.strftime('%d/%m') for data in datas]
