@@ -72,6 +72,7 @@ canvas {
 @media only screen and (max-width: 991px) {
     #titulo1 {
         text-align: center;
+        margin-left: 0;
     }
 
     .descartados {
@@ -84,18 +85,21 @@ canvas {
 
     #titulo2 {
         text-align: center;
+        margin-left: 0;
     }
 
     .graficoEsquerda {
-        margin-left: 5%; 
+        width: 100%;
+        margin-left: 0; 
     }
 
     .graficoDireita {
-        margin-left: 5%; 
+        width: 100%;
+        margin-left: 0;  
     }
 
     #graficoFinal {
-        width: 90%;
-        margin-left: 5%; 
+        width: 100%;
+        margin-left: 0;
     }
 }
