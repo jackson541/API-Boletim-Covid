@@ -14,7 +14,7 @@
 
         <div class="row">
             <div class="col-12">
-                <h1 id="titulo">Casos do Covid-19 em São João do Sabugi</h1>
+                <h1 id="titulo1">Casos do Covid-19 em São João do Sabugi</h1>
             </div>
         </div>
 
@@ -71,34 +71,52 @@
             </div>
         </div>
 
-        <div class="p-4" style="width: 30%; height: 30%; background-color: #000066; color: white;">
-            <p>Evolução dos casos confirmados</p>
-            <canvas id="confirmados" width="100%" height="100%"></canvas>
-        </div>
-        <br>
-        <div class="p-4" style="width: 30%; height: 30%; background-color: #000066; color: white;">
-            <p>Evolução dos casos recuperados</p>
-            <canvas id="recuperados" width="100%" height="100%"></canvas>
-        </div>
-        <br>
-        <div class="p-4" style="width: 30%; height: 30%; background-color: #000066; color: white;">
-            <p>Evolução dos casos suspeitos</p>
-            <canvas id="suspeitos" width="100%" height="100%"></canvas>
-        </div>
-        <br>
-        <div class="p-4" style="width: 30%; height: 30%; background-color: #000066; color: white;">
-            <p>Evolução dos casos descartados</p>
-            <canvas id="descartados" width="100%" height="100%"></canvas>
-        </div>
-        <br>
-        <div class="p-4" style="width: 30%; height: 30%; background-color: #000066; color: white;">
-            <p>Evolução dos casos de óbitos</p>
-            <canvas id="obitos" width="100%" height="100%"></canvas>
+        <div class="row">
+            <div class="col-12">
+                <h2 id="titulo2">Gráficos dos casos</h2>
+            </div>
         </div>
 
+        <p id="teste"></p>
+
+        <div class="row">
+            <div class="col-md-12 col-lg-6 mt-5">
+                <div class="p-4 shadow graficoEsquerda">
+                    <h5 class="text-center">Evolução dos casos confirmados</h5>
+                    <hr>
+                    <canvas id="confirmados"></canvas>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-6 mt-5">
+                <div class="p-4 shadow graficoDireita">
+                    <h5 class="text-center">Evolução dos casos recuperados</h5>
+                    <hr>
+                    <canvas id="recuperados"></canvas>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-6 mt-5">
+                <div class="p-4 shadow graficoEsquerda" >
+                    <h5 class="text-center">Evolução dos casos suspeitos</h5>
+                    <hr>
+                    <canvas id="suspeitos"></canvas>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-6 mt-5">
+                <div class="p-4 shadow graficoDireita" >
+                    <h5 class="text-center">Evolução dos casos descartados</h5>
+                    <hr>
+                    <canvas id="descartados"></canvas>
+                </div>
+            </div>
+            <div class="col-lg-12 mt-5">
+                <div class="p-4 shadow" id="graficoFinal" >
+                    <h5 class="text-center">Evolução dos casos de óbitos</h5>
+                    <hr>
+                    <canvas id="obitos" ></canvas>
+                </div>
+            </div>
+        </div>
     </div>
-
-    
     
 
 
@@ -111,22 +129,41 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
 
+
     <script>
+        //script para redimencionar o tamanho de todos os graficos de acordo
+        //com o tamanho da tela do usuário
+        if (screen.width <= 400) {
+            var tamanho = '325%'
+        } else if (screen.width <= 575) {
+            var tamanho = '300%'
+        }
+
+        const lista = document.getElementsByTagName('canvas')
+
+        for (elemento of lista) {
+            elemento.setAttribute('height', tamanho)
+        }
+    </script>
+
+
+    <script>
+        Chart.defaults.global.defaultFontColor = 'white';
+
         var ctx = document.getElementById('confirmados');
-        var myChart = new Chart(ctx, {
+
+        var graficoConfirmados = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: {{datas|safe}},
                 datasets: [{
                     label: 'Casos confirmados',
                     data: {{graficoCasosConfirmados}},
-                    backgroundColor: [
-                        'rgba(255, 255, 255, 0)'
-                    ],
+                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
                     borderColor: 
-                        'rgba(255, 99, 132, 1)'
+                        'rgba(255, 0, 0, 0.85)'
                     ,
-                    borderWidth: 5
+                    borderWidth: 4
                 }]
             },
             options: {
@@ -134,6 +171,16 @@
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Data'
                         }
                     }]
                 }
@@ -143,7 +190,7 @@
 
     <script>
         var ctx = document.getElementById('recuperados');
-        var myChart = new Chart(ctx, {
+        var graficoRecuperados = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: {{datas|safe}},
@@ -151,12 +198,12 @@
                     label: 'Casos recuperados',
                     data: {{graficoCasosRecuperados}},
                     backgroundColor: [
-                        'rgba(255, 255, 255, 0)'
+                        'rgba(48, 207, 48, 0.1)'
                     ],
                     borderColor: 
-                        'rgba(255, 99, 132, 1)'
+                        'rgba(48, 207, 48, 0.85)'
                     ,
-                    borderWidth: 5
+                    borderWidth: 4
                 }]
             },
             options: {
@@ -164,6 +211,16 @@
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Data'
                         }
                     }]
                 }
@@ -173,7 +230,7 @@
 
     <script>
         var ctx = document.getElementById('suspeitos');
-        var myChart = new Chart(ctx, {
+        var graficoSuspeitos = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: {{datas|safe}},
@@ -181,10 +238,10 @@
                     label: 'Casos suspeitos',
                     data: {{graficoCasosSuspeitos}},
                     backgroundColor: [
-                        'rgba(255, 255, 255, 0)'
+                        'rgba(128, 128, 0, 0.1)'
                     ],
                     borderColor: 
-                        'rgba(255, 99, 132, 1)'
+                        'rgba(128, 128, 0, 0.85)'
                     ,
                     borderWidth: 5
                 }]
@@ -194,6 +251,16 @@
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Data'
                         }
                     }]
                 }
@@ -203,7 +270,7 @@
 
     <script>
         var ctx = document.getElementById('descartados');
-        var myChart = new Chart(ctx, {
+        var graficoDescartados = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: {{datas|safe}},
@@ -211,10 +278,10 @@
                     label: 'Casos descartados',
                     data: {{graficoCasosDescartados}},
                     backgroundColor: [
-                        'rgba(255, 255, 255, 0)'
+                        'rgba(191, 64, 191, 0.1)'
                     ],
                     borderColor: 
-                        'rgba(255, 99, 132, 1)'
+                        'rgba(191, 64, 191, 0.85)'
                     ,
                     borderWidth: 5
                 }]
@@ -224,6 +291,16 @@
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Data'
                         }
                     }]
                 }
@@ -233,7 +310,7 @@
 
     <script>
         var ctx = document.getElementById('obitos');
-        var myChart = new Chart(ctx, {
+        var graficoObitos = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: {{datas|safe}},
@@ -241,10 +318,10 @@
                     label: 'Casos de óbitos',
                     data: {{graficoCasosObitos}},
                     backgroundColor: [
-                        'rgba(255, 255, 255, 0)'
+                        'rgba(0, 0, 0, 0.1)'
                     ],
                     borderColor: 
-                        'rgba(255, 99, 132, 1)'
+                        'rgba(0, 0, 0, 1)'
                     ,
                     borderWidth: 5
                 }]
@@ -254,6 +331,16 @@
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Data'
                         }
                     }]
                 }

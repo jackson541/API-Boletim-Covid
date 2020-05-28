@@ -2,7 +2,7 @@ body {
     background-color: rgba(29, 165, 132, 0.05);
 }
 
-#titulo {
+#titulo1 {
     margin: 5% 0 5% 5%;
 }
 
@@ -30,8 +30,46 @@ body {
     margin-left: 10%;
 }
 
+#titulo2{
+    margin: 5% 0 0 5%;
+}
+
+hr {
+    margin: 3% 0
+}
+
+canvas {
+    margin-bottom: 3%;
+}
+
+.graficoEsquerda {
+    width: 90%;
+    height: 95%;
+    margin-left: 10%;
+    background-color: rgba(28, 55, 83, 0.85); 
+    color: white;
+    border-radius: 20px;
+}
+
+.graficoDireita {
+    width: 90%;
+    height: 95%;
+    background-color: rgba(28, 55, 83, 0.85); 
+    color: white;
+    border-radius: 20px;
+}
+
+#graficoFinal {
+    width: 44%;
+    height: 95%;
+    margin-left: 28%;
+    background-color: rgba(28, 55, 83, 0.85); 
+    color: white;
+    border-radius: 20px;
+}
+
 @media only screen and (max-width: 991px) {
-    #titulo {
+    #titulo1 {
         text-align: center;
     }
 
@@ -41,5 +79,22 @@ body {
 
     .obitos {
         margin: 0 auto;
+    }
+
+    #titulo2 {
+        text-align: center;
+    }
+
+    .graficoEsquerda {
+        margin-left: 5%; 
+    }
+
+    .graficoDireita {
+        margin-left: 5%; 
+    }
+
+    #graficoFinal {
+        width: 90%;
+        margin-left: 5%; 
     }
 }
