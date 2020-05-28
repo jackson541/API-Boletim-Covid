@@ -69,6 +69,11 @@ canvas {
     border-radius: 20px;
 }
 
+.cardVideo {
+    background-color: white;
+    padding: 5%;
+}
+
 @media only screen and (max-width: 991px) {
     #titulo1 {
         text-align: center;
