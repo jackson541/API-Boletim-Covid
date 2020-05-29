@@ -69,9 +69,34 @@ canvas {
     border-radius: 20px;
 }
 
-.cardVideo {
+#titulo3{
+    margin: 5% 0 3% 5%;
+}
+
+.cardVideoEsquerda {
     background-color: white;
     padding: 5%;
+    width: 94%;
+    margin-left: 10%;
+    border-right: solid gray 5px;
+}
+
+.cardVideoDireita {
+    background-color: white;
+    padding: 5%;
+    height: 100%;
+    margin-right: 10%;
+    border-left: solid gray 5px;
+}
+
+.video {
+    margin-top: 4%;
+}
+
+.infoAdicionais {
+    margin: 0 5%;
+    border-top: solid gray 5px;
+    padding: 7px 0 1px 0;
 }
 
 @media only screen and (max-width: 991px) {
