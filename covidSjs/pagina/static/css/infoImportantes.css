@@ -1,0 +1,76 @@
+#titulo3{
+    margin: 5% 0 3% 5%;
+}
+
+.cardVideoEsquerda {
+    background-color: white;
+    padding: 5%;
+    width: 94%;
+    height: 100%;
+    margin-left: 10%;
+    border-right: solid gray 5px;
+}
+
+.cardVideoDireita {
+    background-color: white;
+    padding: 5%;
+    height: 100%;
+    margin-right: 10%;
+    border-left: solid gray 5px;
+}
+
+.video {
+    margin-top: 4%;
+}
+
+.infoAdicionais {
+    margin: 0 5%;
+    border-top: solid gray 5px;
+    padding: 7px 0 1px 0;
+}
+
+.infoAdicionais a{
+    text-decoration: none;
+}
+
+
+@media only screen and (max-width: 991px) {
+    #titulo3 {
+        text-align: center;
+        margin-left: 0;
+    }
+
+    .cardVideoEsquerda {
+        width: 90%;
+        margin: auto;
+        border-bottom: solid gray 5px;
+        border-right: 0;
+    }
+
+    .cardVideoEsquerda h5 {
+        text-align: center;
+    }
+    
+    .cardVideoDireita {
+        width: 90%;
+        margin: auto;
+        border-bottom: solid gray 5px;
+        border-left: 0;
+    }
+
+    .cardVideoDireita h5 {
+        text-align: center;
+    }
+    
+    .video {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .infoAdicionais {
+        margin: 0 1%;
+        border-top: none;
+        padding: 7px 0 1px 0;
+    }
+}

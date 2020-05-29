@@ -7,7 +7,12 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/casos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/graficos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/infoImportantes.css' %}">
+    
     <title>covid sjs</title>
 </head>
 <body>
@@ -126,7 +131,7 @@
 
         <div class="row">
             <div class="col-lg-6">
-                <div class="cardVideoEsquerda">
+                <div class="cardVideoEsquerda shadow">
                     <h5>Qual a importância de usar a máscara?</h5>
                     <iframe class="video" src="http://www.youtube.com/embed/hyGGiySNpeU" 
                         width="480px" height="270px" frameborder="0">
@@ -135,7 +140,7 @@
             </div>
             
             <div class="col-lg-6">
-                <div class="cardVideoDireita">
+                <div class="cardVideoDireita shadow">
                     <h5>Máscaras de pano são eficazes? Como lavar?</h5>
                     <iframe class="video" src="http://www.youtube.com/embed/lvk1P0ldVZY" 
                         width="480px" height="270px" frameborder="0">
@@ -143,7 +148,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="cardVideoEsquerda">
+                <div class="cardVideoEsquerda shadow">
                     <h5>Quais cuidados ter com a máscara no rosto?</h5>
                     <iframe class="video" src="http://www.youtube.com/embed/R0YA559kN8M" 
                         width="480px" height="270px" frameborder="0">
@@ -151,7 +156,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="cardVideoDireita">
+                <div class="cardVideoDireita shadow">
                     <h5>Quem não tem sintomas também deve usar máscara?</h5>
                     <iframe class="video" src="http://www.youtube.com/embed/MfMGvRH4G4A" 
                         width="480px" height="270px" frameborder="0">
@@ -159,7 +164,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="cardVideoEsquerda">
+                <div class="cardVideoEsquerda shadow">
                     <h5>Como retirar a máscara corretamente?</h5>
                     <iframe class="video" src="http://www.youtube.com/embed/L5jOGnI5bgw" 
                         width="480px" height="270px" frameborder="0">
@@ -167,7 +172,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="cardVideoDireita">
+                <div class="cardVideoDireita shadow">
                     <h5>Qual tecido ideal para a máscara?</h5>
                     <iframe class="video" src="http://www.youtube.com/embed/qXpl33dybcw" 
                         width="480px" height="270px" frameborder="0">
@@ -175,8 +180,10 @@
                 </div>
             </div>
             <div class="col-lg-12">
-                <div class="bg-white text-center infoAdicionais">
-                    <p>Informações adicionais</p>
+                <div class="bg-white text-center infoAdicionais shadow">
+                    <a href="https://www.todospelasaude.org/" target="_blank">
+                        Informações adicionais
+                    </a>
                 </div>
             </div>
         </div>
@@ -198,10 +205,40 @@
     <script>
         //script para redimencionar o tamanho de todos os graficos de acordo
         //com o tamanho da tela do usuário
+        let menorQue1200 = false
+        let menorQue456 = false
+
         if (screen.width <= 400) {
             var tamanho = '325%'
+            menorQue456 = true
+
+        } else if (screen.width <= 455) {
+            var tamanho = '300%'
+            menorQue456 = true
+
         } else if (screen.width <= 575) {
             var tamanho = '300%'
+            menorQue1200 = true
+
+        } else if (screen.width <= 1199){
+            menorQue1200 = true
+        }
+
+        if (menorQue456) {
+            const videos = document.getElementsByClassName('video')
+
+            for (video of videos) {
+                video.setAttribute('height', '135px')
+                video.setAttribute('width', '270px')
+            }
+
+        } else if (menorQue1200) {
+            const videos = document.getElementsByClassName('video')
+
+            for (video of videos) {
+                video.setAttribute('height', '180px')
+                video.setAttribute('width', '360px')
+            }
         }
 
         const lista = document.getElementsByTagName('canvas')

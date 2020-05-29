@@ -1,0 +1,60 @@
+#titulo2{
+    margin: 5% 0 0 5%;
+}
+
+hr {
+    margin: 3% 0
+}
+
+canvas {
+    margin-bottom: 3%;
+}
+
+.graficoEsquerda {
+    width: 90%;
+    height: 95%;
+    margin-left: 10%;
+    background-color: rgba(28, 55, 83, 0.85); 
+    color: white;
+    border-radius: 20px;
+}
+
+.graficoDireita {
+    width: 90%;
+    height: 95%;
+    background-color: rgba(28, 55, 83, 0.85); 
+    color: white;
+    border-radius: 20px;
+}
+
+#graficoFinal {
+    width: 44%;
+    height: 95%;
+    margin-left: 28%;
+    background-color: rgba(28, 55, 83, 0.85); 
+    color: white;
+    border-radius: 20px;
+}
+
+
+@media only screen and (max-width: 991px) {
+    #titulo2 {
+        text-align: center;
+        margin-left: 0;
+    }
+
+    .graficoEsquerda {
+        width: 100%;
+        margin-left: 0; 
+    }
+
+    .graficoDireita {
+        width: 100%;
+        margin-left: 0;  
+    }
+
+    #graficoFinal {
+        width: 100%;
+        margin-left: 0;
+    }
+}
