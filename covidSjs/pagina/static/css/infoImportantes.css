@@ -33,6 +33,26 @@
     text-decoration: none;
 }
 
+.tituloInfos {
+    background-color: white;
+    height: 100%;
+    padding: 1% 1% 1% 2.2%;
+    margin: 0 5%;
+    border-bottom: solid gray 5px;
+}
+
+.cardTexto {
+    background-color: white;
+    padding: 1% 2.2%;
+    margin: 0 5%;
+    text-align: justify;
+}
+
+.tituloTexto {
+    margin: 1% 0;
+    color: rgb(28, 55, 83);
+}
+
 
 @media only screen and (max-width: 991px) {
     #titulo3 {
@@ -69,8 +89,23 @@
     }
     
     .infoAdicionais {
-        margin: 0 1%;
+        margin: 0 5%;
         border-top: none;
         padding: 7px 0 1px 0;
     }
+
+    .tituloInfos {
+        text-align: center;
+        padding-top: 2%;
+        padding-bottom: 2%;
+    }
+
+    .cardTexto {
+        padding: 1% 5%;
+    }
+
+    .tituloTexto{
+        margin: 5% 0;
+    }
+
 }
