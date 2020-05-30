@@ -24,6 +24,7 @@
 
 #explicacao {
     margin: 1% 0 0 5%;
+    text-align: justify;
 }
 
 
@@ -31,6 +32,7 @@
     #titulo1 {
         text-align: center;
         margin-left: 0;
+        margin-top: 15%;
     }
 
     .descartados {
@@ -39,5 +41,14 @@
 
     .obitos {
         margin: 0 auto;
+    }
+}
+
+
+@media only screen and (max-width:575px) {
+    #titulo1 {
+        text-align: center;
+        margin-left: 0;
+        margin-top: 20%;
     }
 }

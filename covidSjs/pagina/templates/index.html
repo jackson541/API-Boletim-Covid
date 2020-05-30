@@ -227,7 +227,7 @@
                 </div>
             </div>
             <div class="col-lg-12">
-                <div class="bg-white text-center infoAdicionais shadow">
+                <div class="bg-white text-center pb-2 infoAdicionais shadow">
                     <a href="https://www.todospelasaude.org/" target="_blank">
                         Informações adicionais
                     </a>
@@ -392,7 +392,7 @@
                 </div>
             </div>
             <div class="col-lg-12">
-                <div class="bg-white text-center infoAdicionais shadow">
+                <div class="bg-white text-center pb-2 infoAdicionais shadow">
                     <a href="https://coronavirus.saude.gov.br/index.php/sobre-a-doenca"
                      target="_blank">
                         Mais informações
@@ -421,47 +421,55 @@
     <script>
         //script para redimencionar o tamanho de todos os graficos de acordo
         //com o tamanho da tela do usuário
-        let menorQue1200 = false
-        let menorQue456 = false
+        function redimencionarTela() {
+            let menorQue1200 = false
+            let menorQue456 = false
 
-        if (screen.width <= 400) {
-            var tamanho = '325%'
-            menorQue456 = true
+            if (screen.width <= 400) {
+                var tamanho = '325%'
+                menorQue456 = true
 
-        } else if (screen.width <= 455) {
-            var tamanho = '300%'
-            menorQue456 = true
+            } else if (screen.width <= 455) {
+                var tamanho = '300%'
+                menorQue456 = true
 
-        } else if (screen.width <= 575) {
-            var tamanho = '300%'
-            menorQue1200 = true
+            } else if (screen.width <= 575) {
+                var tamanho = '300%'
+                menorQue1200 = true
 
-        } else if (screen.width <= 1199){
-            menorQue1200 = true
-        }
-
-        if (menorQue456) {
-            const videos = document.getElementsByClassName('video')
-
-            for (video of videos) {
-                video.setAttribute('height', '152px')
-                video.setAttribute('width', '270px')
+            } else if (screen.width <= 1199){
+                menorQue1200 = true
             }
 
-        } else if (menorQue1200) {
-            const videos = document.getElementsByClassName('video')
+            if (menorQue456) {
+                const videos = document.getElementsByClassName('video')
 
-            for (video of videos) {
-                video.setAttribute('height', '202px')
-                video.setAttribute('width', '360px')
+                for (video of videos) {
+                    video.setAttribute('height', '152px')
+                    video.setAttribute('width', '270px')
+                }
+
+            } else if (menorQue1200) {
+                const videos = document.getElementsByClassName('video')
+
+                for (video of videos) {
+                    video.setAttribute('height', '202px')
+                    video.setAttribute('width', '360px')
+                }
+            }
+
+            const lista = document.getElementsByTagName('canvas')
+
+            for (elemento of lista) {
+                elemento.setAttribute('height', tamanho)
             }
         }
 
-        const lista = document.getElementsByTagName('canvas')
+        redimencionarTela()
 
-        for (elemento of lista) {
-            elemento.setAttribute('height', tamanho)
-        }
+        //chama a função sempre que a tela for redimencionada
+        window.addEventListener('resize', redimencionarTela)
+
     </script>
 
 
