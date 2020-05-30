@@ -1,5 +1,5 @@
 #titulo2{
-    margin: 5% 0 0 5%;
+    margin: 3% 0 0 5%;
 }
 
 hr {
@@ -27,15 +27,6 @@ canvas {
     border-radius: 20px;
 }
 
-#graficoFinal {
-    width: 44%;
-    height: 95%;
-    margin-left: 28%;
-    background-color: rgba(28, 55, 83, 0.85); 
-    color: white;
-    border-radius: 20px;
-}
-
 
 @media only screen and (max-width: 991px) {
     #titulo2 {
@@ -51,10 +42,5 @@ canvas {
     .graficoDireita {
         width: 100%;
         margin-left: 0;  
-    }
-
-    #graficoFinal {
-        width: 100%;
-        margin-left: 0;
     }
 }

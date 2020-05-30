@@ -25,6 +25,7 @@ def gerarDadosGraficos(casoAtual):
     datas.append(casoAtual.data)
 
     graficoCasosConfirmados = []
+    graficoCasosConfirmadosFora = []
     graficoCasosRecuperados = []
     graficoCasosSuspeitos = []
     graficoCasosDescartados = []
@@ -40,6 +41,7 @@ def gerarDadosGraficos(casoAtual):
         casoParaAdicionar = Casos.objects.filter(data__lte=data).latest()
 
         graficoCasosConfirmados.append(casoParaAdicionar.confirmados)
+        graficoCasosConfirmadosFora.append(casoParaAdicionar.confirmadosFora)
         graficoCasosRecuperados.append(casoParaAdicionar.recuperados)
         graficoCasosSuspeitos.append(casoParaAdicionar.suspeitos)
         graficoCasosDescartados.append(casoParaAdicionar.descartados)
@@ -49,14 +51,14 @@ def gerarDadosGraficos(casoAtual):
     #converte as datas para string no formato dia/mes
     datas = [data.strftime('%d/%m') for data in datas]
 
-    return datas, graficoCasosConfirmados, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos
+    return datas, graficoCasosConfirmados, graficoCasosConfirmadosFora, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos
 
 
 class index(View):
     def get(self, request):
         casoAtual = Casos.objects.latest('data')
 
-        datas, graficoCasosConfirmados, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos = gerarDadosGraficos(casoAtual)
+        datas, graficoCasosConfirmados, graficoCasosConfirmadosFora, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos = gerarDadosGraficos(casoAtual)
 
         # inverte a ordem da lista completa de objetos, que estão ordenados pela
         # data, e pega o segundo da lista (penúltimo)
@@ -64,6 +66,7 @@ class index(View):
 
         casosNovos = {
             'confirmados': casoAtual.confirmados - penultimoCaso.confirmados,
+            'confirmadosFora': casoAtual.confirmadosFora - penultimoCaso.confirmadosFora,
             'recuperados': casoAtual.recuperados - penultimoCaso.recuperados,
             'suspeitos': casoAtual.suspeitos - penultimoCaso.suspeitos,
             'descartados': casoAtual.descartados - penultimoCaso.descartados,
@@ -73,9 +76,10 @@ class index(View):
         return render(request, 'index.html', {'casoAtual': casoAtual, 
                                             'casosNovos': casosNovos,
                                             'datas': datas,
-                            'graficoCasosConfirmados': graficoCasosConfirmados,
-                            'graficoCasosRecuperados': graficoCasosRecuperados,
-                            'graficoCasosSuspeitos': graficoCasosSuspeitos,
-                            'graficoCasosDescartados': graficoCasosDescartados,
-                            'graficoCasosObitos': graficoCasosObitos,
+                    'graficoCasosConfirmados': graficoCasosConfirmados,
+                    'graficoCasosConfirmadosFora': graficoCasosConfirmadosFora,
+                    'graficoCasosRecuperados': graficoCasosRecuperados,
+                    'graficoCasosSuspeitos': graficoCasosSuspeitos,
+                    'graficoCasosDescartados': graficoCasosDescartados,
+                    'graficoCasosObitos': graficoCasosObitos,
         })

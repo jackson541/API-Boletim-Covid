@@ -6,6 +6,10 @@
     color: #FF0000
 }
 
+.confirmadosFora h5{
+    color: rgb(245, 141, 141)
+}
+
 .recuperados h5{
     color: #30CF30
 }
@@ -14,16 +18,12 @@
     color: #808000
 }
 
-.descartados {
-    margin-left: 45%;
-}
-
 .descartados h5 {
     color: #BF40BF
 }
 
-.obitos {
-    margin-left: 10%;
+#explicacao {
+    margin: 1% 0 0 5%;
 }
 
 

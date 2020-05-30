@@ -63,6 +63,16 @@
                 </div>
             </div>
             <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card mx-auto mt-4 shadow-sm pl-2 confirmadosFora" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title font-weight-bold">Confirmados fora*</h5>
+                        <p class="card-text">{{ casoAtual.confirmados }}</p>
+                        <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
+                        <p class="card-text">{{ casosNovos.confirmados }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-4">
                 <div class="card mx-auto mt-4 shadow-sm pl-2 recuperados" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title font-weight-bold">Recuperados</h5>
@@ -82,8 +92,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-6 col-lg-6">
-                <div class="card descartados mt-4 shadow-sm pl-2" style="width: 18rem;">
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card mx-auto  mt-4 shadow-sm pl-2 descartados" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title font-weight-bold">Descartados</h5>
                         <p class="card-text">{{ casoAtual.descartados }}</p>
@@ -92,8 +102,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-6 col-lg-6">
-                <div class="card obitos mt-4 shadow-sm pl-2" style="width: 18rem;">
+            <div class="col-sm-6 col-md-6 col-lg-4">
+                <div class="card mx-auto mt-4 shadow-sm pl-2 obitos" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title font-weight-bold">Óbitos</h5>
                         <p class="card-text">{{ casoAtual.obitos }}</p>
@@ -102,6 +112,11 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-12">
+                <p id="explicacao">* Pessoas que tiveram o teste confirmado e 
+                    têm endereço na cidade, mas que no momento se encontram fora.
+                </p>
+            </div>
         </div>
 
         <div class="row">
@@ -109,8 +124,6 @@
                 <h2 id="titulo2">Gráficos dos casos</h2>
             </div>
         </div>
-
-        <p id="teste"></p>
 
         <div class="row">
             <div class="col-md-12 col-lg-6 mt-3">
@@ -122,27 +135,34 @@
             </div>
             <div class="col-md-12 col-lg-6 mt-3">
                 <div class="p-4 shadow graficoDireita">
+                    <h5 class="text-center">Evolução dos casos confirmados fora</h5>
+                    <hr>
+                    <canvas id="confirmadosFora"></canvas>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-6 mt-5">
+                <div class="p-4 shadow graficoEsquerda">
                     <h5 class="text-center">Evolução dos casos recuperados</h5>
                     <hr>
                     <canvas id="recuperados"></canvas>
                 </div>
             </div>
             <div class="col-md-12 col-lg-6 mt-5">
-                <div class="p-4 shadow graficoEsquerda" >
+                <div class="p-4 shadow graficoDireita" >
                     <h5 class="text-center">Evolução dos casos suspeitos</h5>
                     <hr>
                     <canvas id="suspeitos"></canvas>
                 </div>
             </div>
             <div class="col-md-12 col-lg-6 mt-5">
-                <div class="p-4 shadow graficoDireita" >
+                <div class="p-4 shadow graficoEsquerda" >
                     <h5 class="text-center">Evolução dos casos descartados</h5>
                     <hr>
                     <canvas id="descartados"></canvas>
                 </div>
             </div>
-            <div class="col-lg-12 mt-5">
-                <div class="p-4 shadow" id="graficoFinal" >
+            <div class="col-md-12 col-lg-6 mt-5">
+                <div class="p-4 shadow graficoDireita">
                     <h5 class="text-center">Evolução dos casos de óbitos</h5>
                     <hr>
                     <canvas id="obitos" ></canvas>
@@ -460,6 +480,47 @@
                     backgroundColor: 'rgba(255, 0, 0, 0.1)',
                     borderColor: 
                         'rgba(255, 0, 0, 0.85)'
+                    ,
+                    borderWidth: 4
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos'
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Data'
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+
+    <script>
+        Chart.defaults.global.defaultFontColor = 'white';
+
+        var ctx = document.getElementById('confirmadosFora');
+
+        var graficoConfirmadosFora = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{datas|safe}},
+                datasets: [{
+                    label: 'Casos confirmados',
+                    data: {{graficoCasosConfirmadosFora}},
+                    backgroundColor: 'rgba(245, 141, 141, 0.1)',
+                    borderColor: 
+                        'rgba(245, 141, 141, 0.85)'
                     ,
                     borderWidth: 4
                 }]

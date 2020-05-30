@@ -5,6 +5,7 @@ from django.db import models
 class casos (models.Model):
     data = models.DateField(primary_key=True)
     confirmados = models.IntegerField()
+    confirmadosFora = models.IntegerField('Confirmados fora da cidade')
     recuperados = models.IntegerField()
     suspeitos = models.IntegerField()
     descartados = models.IntegerField()
