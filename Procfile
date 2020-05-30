@@ -1,1 +1,1 @@
-web: gunicorn CovidSjs.wsgi
+web: gunicorn covidSjs.wsgi
