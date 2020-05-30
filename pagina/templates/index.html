@@ -421,6 +421,8 @@
     <script>
         //script para redimencionar o tamanho de todos os graficos de acordo
         //com o tamanho da tela do usuário
+        Chart.defaults.global.defaultFontColor = 'white';
+
         function redimencionarTela() {
             let menorQue1200 = false
             let menorQue456 = false
@@ -463,255 +465,279 @@
             for (elemento of lista) {
                 elemento.setAttribute('height', tamanho)
             }
+
+            //criando gráficos
+            var ctx = document.getElementById('confirmados');
+
+            var graficoConfirmados = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{datas|safe}},
+                    datasets: [{
+                        label: 'Casos confirmados',
+                        data: {{graficoCasosConfirmados}},
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        borderColor: 
+                            'rgba(255, 0, 0, 0.85)'
+                        ,
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número de casos'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            
+            ctx = document.getElementById('confirmadosFora');
+
+            var graficoConfirmadosFora = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{datas|safe}},
+                    datasets: [{
+                        label: 'Casos confirmados',
+                        data: {{graficoCasosConfirmadosFora}},
+                        backgroundColor: 'rgba(245, 141, 141, 0.1)',
+                        borderColor: 
+                            'rgba(245, 141, 141, 0.85)'
+                        ,
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número de casos'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            ctx = document.getElementById('recuperados');
+            var graficoRecuperados = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{datas|safe}},
+                    datasets: [{
+                        label: 'Casos recuperados',
+                        data: {{graficoCasosRecuperados}},
+                        backgroundColor: [
+                            'rgba(48, 207, 48, 0.1)'
+                        ],
+                        borderColor: 
+                            'rgba(48, 207, 48, 0.85)'
+                        ,
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número de casos'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            ctx = document.getElementById('recuperados');
+            var graficoRecuperados = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{datas|safe}},
+                    datasets: [{
+                        label: 'Casos recuperados',
+                        data: {{graficoCasosRecuperados}},
+                        backgroundColor: [
+                            'rgba(48, 207, 48, 0.1)'
+                        ],
+                        borderColor: 
+                            'rgba(48, 207, 48, 0.85)'
+                        ,
+                        borderWidth: 4
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número de casos'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    }
+                }
+            });
+            
+            ctx = document.getElementById('suspeitos');
+            var graficoSuspeitos = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{datas|safe}},
+                    datasets: [{
+                        label: 'Casos suspeitos',
+                        data: {{graficoCasosSuspeitos}},
+                        backgroundColor: [
+                            'rgba(128, 128, 0, 0.1)'
+                        ],
+                        borderColor: 
+                            'rgba(128, 128, 0, 0.85)'
+                        ,
+                        borderWidth: 5
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número de casos'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            ctx = document.getElementById('descartados');
+            var graficoDescartados = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{datas|safe}},
+                    datasets: [{
+                        label: 'Casos descartados',
+                        data: {{graficoCasosDescartados}},
+                        backgroundColor: [
+                            'rgba(191, 64, 191, 0.1)'
+                        ],
+                        borderColor: 
+                            'rgba(191, 64, 191, 0.85)'
+                        ,
+                        borderWidth: 5
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número de casos'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            ctx = document.getElementById('obitos');
+            var graficoObitos = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{datas|safe}},
+                    datasets: [{
+                        label: 'Casos de óbitos',
+                        data: {{graficoCasosObitos}},
+                        backgroundColor: [
+                            'rgba(0, 0, 0, 0.1)'
+                        ],
+                        borderColor: 
+                            'rgba(0, 0, 0, 1)'
+                        ,
+                        borderWidth: 5
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número de casos'
+                            }
+                        }],
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Data'
+                            }
+                        }]
+                    }
+                }
+            });
         }
 
         redimencionarTela()
 
         //chama a função sempre que a tela for redimencionada
-        window.addEventListener('resize', redimencionarTela)
+        //window.addEventListener('resize', redimencionarTela)
 
     </script>
-
-
-    <script>
-        Chart.defaults.global.defaultFontColor = 'white';
-
-        var ctx = document.getElementById('confirmados');
-
-        var graficoConfirmados = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{datas|safe}},
-                datasets: [{
-                    label: 'Casos confirmados',
-                    data: {{graficoCasosConfirmados}},
-                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                    borderColor: 
-                        'rgba(255, 0, 0, 0.85)'
-                    ,
-                    borderWidth: 4
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Número de casos'
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Data'
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-
-    <script>
-        Chart.defaults.global.defaultFontColor = 'white';
-
-        var ctx = document.getElementById('confirmadosFora');
-
-        var graficoConfirmadosFora = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{datas|safe}},
-                datasets: [{
-                    label: 'Casos confirmados',
-                    data: {{graficoCasosConfirmadosFora}},
-                    backgroundColor: 'rgba(245, 141, 141, 0.1)',
-                    borderColor: 
-                        'rgba(245, 141, 141, 0.85)'
-                    ,
-                    borderWidth: 4
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Número de casos'
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Data'
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-
-    <script>
-        var ctx = document.getElementById('recuperados');
-        var graficoRecuperados = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{datas|safe}},
-                datasets: [{
-                    label: 'Casos recuperados',
-                    data: {{graficoCasosRecuperados}},
-                    backgroundColor: [
-                        'rgba(48, 207, 48, 0.1)'
-                    ],
-                    borderColor: 
-                        'rgba(48, 207, 48, 0.85)'
-                    ,
-                    borderWidth: 4
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Número de casos'
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Data'
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-
-    <script>
-        var ctx = document.getElementById('suspeitos');
-        var graficoSuspeitos = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{datas|safe}},
-                datasets: [{
-                    label: 'Casos suspeitos',
-                    data: {{graficoCasosSuspeitos}},
-                    backgroundColor: [
-                        'rgba(128, 128, 0, 0.1)'
-                    ],
-                    borderColor: 
-                        'rgba(128, 128, 0, 0.85)'
-                    ,
-                    borderWidth: 5
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Número de casos'
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Data'
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-
-    <script>
-        var ctx = document.getElementById('descartados');
-        var graficoDescartados = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{datas|safe}},
-                datasets: [{
-                    label: 'Casos descartados',
-                    data: {{graficoCasosDescartados}},
-                    backgroundColor: [
-                        'rgba(191, 64, 191, 0.1)'
-                    ],
-                    borderColor: 
-                        'rgba(191, 64, 191, 0.85)'
-                    ,
-                    borderWidth: 5
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Número de casos'
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Data'
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-
-    <script>
-        var ctx = document.getElementById('obitos');
-        var graficoObitos = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{datas|safe}},
-                datasets: [{
-                    label: 'Casos de óbitos',
-                    data: {{graficoCasosObitos}},
-                    backgroundColor: [
-                        'rgba(0, 0, 0, 0.1)'
-                    ],
-                    borderColor: 
-                        'rgba(0, 0, 0, 1)'
-                    ,
-                    borderWidth: 5
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Número de casos'
-                        }
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Data'
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
+    
 </html>
