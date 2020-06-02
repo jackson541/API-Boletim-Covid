@@ -1,5 +1,5 @@
 * {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
 }
 
 body {
@@ -36,10 +36,6 @@ footer {
 
 
 @media only screen and (max-width:575px) {
-    * {
-        scroll-behavior: auto;
-    }
-
     #footerTexto {
         margin-left: 0;
     }
