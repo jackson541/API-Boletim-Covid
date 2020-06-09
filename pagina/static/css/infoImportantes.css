@@ -61,10 +61,11 @@
     }
 
     .cardVideoEsquerda {
-        width: 90%;
+        width: 100%;
         margin: auto;
         border-bottom: solid gray 5px;
         border-right: 0;
+        padding: 5% 1%;
     }
 
     .cardVideoEsquerda h5 {
@@ -72,10 +73,11 @@
     }
     
     .cardVideoDireita {
-        width: 90%;
+        width: 100%;
         margin: auto;
         border-bottom: solid gray 5px;
         border-left: 0;
+        padding: 5% 1%;
     }
 
     .cardVideoDireita h5 {

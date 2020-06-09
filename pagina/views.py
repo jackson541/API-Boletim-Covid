@@ -64,13 +64,17 @@ class index(View):
         # data, e pega o segundo da lista (penúltimo)
         penultimoCaso = Casos.objects.order_by('data')[::-1][1]
 
+        '''
+            Se o diferença dos casos novos for maior ou igual a 0, permanecerá o
+             valor, se não, o valor passado será 0
+        '''
         casosNovos = {
-            'confirmados': casoAtual.confirmados - penultimoCaso.confirmados,
-            'confirmadosFora': casoAtual.confirmadosFora - penultimoCaso.confirmadosFora,
-            'recuperados': casoAtual.recuperados - penultimoCaso.recuperados,
-            'suspeitos': casoAtual.suspeitos - penultimoCaso.suspeitos,
-            'descartados': casoAtual.descartados - penultimoCaso.descartados,
-            'obitos': casoAtual.obitos - penultimoCaso.obitos
+            'confirmados': casoAtual.confirmados - penultimoCaso.confirmados if casoAtual.confirmados - penultimoCaso.confirmados >=0 else 0,
+            'confirmadosFora': casoAtual.confirmadosFora - penultimoCaso.confirmadosFora if casoAtual.confirmadosFora - penultimoCaso.confirmadosFora >=0 else 0,
+            'recuperados': casoAtual.recuperados - penultimoCaso.recuperados if casoAtual.recuperados - penultimoCaso.recuperados >=0 else 0,
+            'suspeitos': casoAtual.suspeitos - penultimoCaso.suspeitos if casoAtual.suspeitos - penultimoCaso.suspeitos >=0 else 0,
+            'descartados': casoAtual.descartados - penultimoCaso.descartados if casoAtual.descartados - penultimoCaso.descartados >=0 else 0,
+            'obitos': casoAtual.obitos - penultimoCaso.obitos if casoAtual.obitos - penultimoCaso.obitos >=0 else 0
         }
 
         return render(request, 'index.html', {'casoAtual': casoAtual, 

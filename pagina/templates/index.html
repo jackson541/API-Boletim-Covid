@@ -50,6 +50,11 @@
                 <h1 id="titulo1">Casos do Covid-19 em São João do Sabugi</h1>
             </div>
         </div>
+        <div class="row">
+            <dic class="col-12">
+                <p class="explicacao">Última atualização dos boletins: {{ casoAtual.data }} </p>
+            </dic>
+        </div>
 
         <div class="row">
             <div class="col-sm-6 col-md-6 col-lg-4">
@@ -113,7 +118,7 @@
                 </div>
             </div>
             <div class="col-lg-12">
-                <p id="explicacao">* Pessoas que tiveram o teste confirmado e 
+                <p class="explicacao">* Pessoas que tiveram o teste confirmado e 
                     têm endereço na cidade, mas que no momento se encontram fora.
                 </p>
             </div>
@@ -447,8 +452,8 @@
                 const videos = document.getElementsByClassName('video')
 
                 for (video of videos) {
-                    video.setAttribute('height', '152px')
-                    video.setAttribute('width', '270px')
+                    video.setAttribute('height', '174px')
+                    video.setAttribute('width', '310px')
                 }
 
             } else if (menorQue1200) {
