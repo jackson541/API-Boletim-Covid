@@ -60,7 +60,7 @@
             <div class="col-sm-6 col-md-6 col-lg-4">
                 <div class="card mx-auto mt-4 shadow-sm pl-2 confirmados" style="width: 18rem;">
                     <div class="card-body">
-                        <h5 class="card-title font-weight-bold">Confirmados</h5>
+                        <h5 class="card-title font-weight-bold">Confirmados atuais</h5>
                         <p class="card-text">{{ casoAtual.confirmados }}</p>
                         <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
                         <p class="card-text">{{ casosNovos.confirmados }}</p>
@@ -68,12 +68,12 @@
                 </div>
             </div>
             <div class="col-sm-6 col-md-6 col-lg-4">
-                <div class="card mx-auto mt-4 shadow-sm pl-2 confirmadosFora" style="width: 18rem;">
+                <div class="card mx-auto mt-4 shadow-sm pl-2 confirmadosTotal" style="width: 18rem;">
                     <div class="card-body">
-                        <h5 class="card-title font-weight-bold">Confirmados fora*</h5>
-                        <p class="card-text">{{ casoAtual.confirmadosFora }}</p>
+                        <h5 class="card-title font-weight-bold">Confirmados totais</h5>
+                        <p class="card-text">{{ casoAtual.confirmadosTotal }}</p>
                         <h6 class="card-subtitle mb-2 text-muted">Casos novos</h6>
-                        <p class="card-text">{{ casosNovos.confirmadosFora }}</p>
+                        <p class="card-text">{{ casosNovos.confirmadosTotal }}</p>
                     </div>
                 </div>
             </div>
@@ -117,11 +117,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-12">
-                <p class="explicacao">* Pessoas que tiveram o teste confirmado e 
-                    têm endereço na cidade, mas que no momento se encontram fora.
-                </p>
-            </div>
         </div>
 
         <div class="row">
@@ -133,16 +128,16 @@
         <div class="row">
             <div class="col-md-12 col-lg-6 mt-3">
                 <div class="p-4 shadow graficoEsquerda">
-                    <h5 class="text-center">Evolução dos casos confirmados</h5>
+                    <h5 class="text-center">Evolução dos casos confirmados atuais</h5>
                     <hr>
                     <canvas id="confirmados"></canvas>
                 </div>
             </div>
             <div class="col-md-12 col-lg-6 mt-3">
                 <div class="p-4 shadow graficoDireita">
-                    <h5 class="text-center">Evolução dos casos confirmados fora</h5>
+                    <h5 class="text-center">Evolução dos casos confirmados totais</h5>
                     <hr>
-                    <canvas id="confirmadosFora"></canvas>
+                    <canvas id="confirmadosTotal"></canvas>
                 </div>
             </div>
             <div class="col-md-12 col-lg-6 mt-5">
@@ -510,7 +505,7 @@
             });
 
             
-            ctx = document.getElementById('confirmadosFora');
+            ctx = document.getElementById('confirmadosTotal');
 
             var graficoConfirmadosFora = new Chart(ctx, {
                 type: 'line',
@@ -518,7 +513,7 @@
                     labels: {{datas|safe}},
                     datasets: [{
                         label: 'Casos confirmados',
-                        data: {{graficoCasosConfirmadosFora}},
+                        data: {{graficoCasosConfirmadosTotal}},
                         backgroundColor: 'rgba(245, 141, 141, 0.1)',
                         borderColor: 
                             'rgba(245, 141, 141, 0.85)'

@@ -25,7 +25,7 @@ def gerarDadosGraficos(casoAtual):
     datas.append(casoAtual.data)
 
     graficoCasosConfirmados = []
-    graficoCasosConfirmadosFora = []
+    graficoCasosConfirmadosTotal = []
     graficoCasosRecuperados = []
     graficoCasosSuspeitos = []
     graficoCasosDescartados = []
@@ -41,7 +41,7 @@ def gerarDadosGraficos(casoAtual):
         casoParaAdicionar = Casos.objects.filter(data__lte=data).latest()
 
         graficoCasosConfirmados.append(casoParaAdicionar.confirmados)
-        graficoCasosConfirmadosFora.append(casoParaAdicionar.confirmadosFora)
+        graficoCasosConfirmadosTotal.append(casoParaAdicionar.confirmados + casoParaAdicionar.recuperados)
         graficoCasosRecuperados.append(casoParaAdicionar.recuperados)
         graficoCasosSuspeitos.append(casoParaAdicionar.suspeitos)
         graficoCasosDescartados.append(casoParaAdicionar.descartados)
@@ -51,14 +51,17 @@ def gerarDadosGraficos(casoAtual):
     #converte as datas para string no formato dia/mes
     datas = [data.strftime('%d/%m') for data in datas]
 
-    return datas, graficoCasosConfirmados, graficoCasosConfirmadosFora, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos
+    return datas, graficoCasosConfirmados, graficoCasosConfirmadosTotal, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos
 
 
 class index(View):
     def get(self, request):
         casoAtual = Casos.objects.latest('data')
 
-        datas, graficoCasosConfirmados, graficoCasosConfirmadosFora, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos = gerarDadosGraficos(casoAtual)
+        #adicionar os casos atuais que não existem na modelagem do banco de dados
+        casoAtual.confirmadosTotal = casoAtual.confirmados + casoAtual.recuperados
+
+        datas, graficoCasosConfirmados, graficoCasosConfirmadosTotal, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos = gerarDadosGraficos(casoAtual)
 
         # inverte a ordem da lista completa de objetos, que estão ordenados pela
         # data, e pega o segundo da lista (penúltimo)
@@ -70,18 +73,18 @@ class index(View):
         '''
         casosNovos = {
             'confirmados': casoAtual.confirmados - penultimoCaso.confirmados if casoAtual.confirmados - penultimoCaso.confirmados >=0 else 0,
-            'confirmadosFora': casoAtual.confirmadosFora - penultimoCaso.confirmadosFora if casoAtual.confirmadosFora - penultimoCaso.confirmadosFora >=0 else 0,
-            'recuperados': casoAtual.recuperados - penultimoCaso.recuperados if casoAtual.recuperados - penultimoCaso.recuperados >=0 else 0,
+            'confirmadosTotal': casoAtual.confirmadosTotal - (penultimoCaso.confirmados + penultimoCaso.recuperados), 
+            'recuperados': casoAtual.recuperados - penultimoCaso.recuperados,
             'suspeitos': casoAtual.suspeitos - penultimoCaso.suspeitos if casoAtual.suspeitos - penultimoCaso.suspeitos >=0 else 0,
-            'descartados': casoAtual.descartados - penultimoCaso.descartados if casoAtual.descartados - penultimoCaso.descartados >=0 else 0,
-            'obitos': casoAtual.obitos - penultimoCaso.obitos if casoAtual.obitos - penultimoCaso.obitos >=0 else 0
+            'descartados': casoAtual.descartados - penultimoCaso.descartados,
+            'obitos': casoAtual.obitos - penultimoCaso.obitos
         }
 
         return render(request, 'index.html', {'casoAtual': casoAtual, 
                                             'casosNovos': casosNovos,
                                             'datas': datas,
                     'graficoCasosConfirmados': graficoCasosConfirmados,
-                    'graficoCasosConfirmadosFora': graficoCasosConfirmadosFora,
+                    'graficoCasosConfirmadosTotal': graficoCasosConfirmadosTotal,
                     'graficoCasosRecuperados': graficoCasosRecuperados,
                     'graficoCasosSuspeitos': graficoCasosSuspeitos,
                     'graficoCasosDescartados': graficoCasosDescartados,
