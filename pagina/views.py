@@ -4,25 +4,35 @@ import datetime
 
 from .models import casos as Casos
 
-# Create your views here.
-
 def gerarDadosGraficos(casoAtual):
     primeiroCaso = Casos.objects.first()
     diferencaEmDias = (casoAtual.data - primeiroCaso.data).days + 1
 
-    # O salto serve para pegar 11 datas com espaçamento igual entre a primeira e
-    # a última data cadastrada.
-    saltoEntreDatas = diferencaEmDias/10
+    #número de datas que devem ter o conteúdo passado para o gráfico
+    totalDatasDoGrafico = 20
+
+    #número de datas que devem ter o conteúdo passado para o eixo X do gráfico
+    totalDatasExibidas = totalDatasDoGrafico - 10
+
+    saltoEntreDatasDoGrafico = diferencaEmDias/totalDatasDoGrafico
+    saltoEntreDatasExibidas = diferencaEmDias/totalDatasExibidas
     
-    datas = []
+    datasDoGrafico = []
+    datasExibidas = []
 
     #adiciona todas as datas que obedecem ao intervalo de saltos
-    for x in range(10):
-        datas.append(
-            primeiroCaso.data + datetime.timedelta(saltoEntreDatas * x)
+    for x in range(totalDatasDoGrafico):
+        datasDoGrafico.append(
+            primeiroCaso.data + datetime.timedelta(saltoEntreDatasDoGrafico * x)
         )
 
-    datas.append(casoAtual.data)
+    for x in range(totalDatasExibidas):
+        datasExibidas.append(
+            primeiroCaso.data + datetime.timedelta(saltoEntreDatasExibidas * x)
+        )
+
+    datasDoGrafico.append(casoAtual.data)
+    datasExibidas.append(casoAtual.data)
 
     graficoCasosConfirmados = []
     graficoCasosConfirmadosTotal = []
@@ -37,7 +47,7 @@ def gerarDadosGraficos(casoAtual):
         existir, ele irá pegar o último objeto listado (por meio da lista gerada
         pelo '__lte') mais próximo.
     '''
-    for data in datas:
+    for data in datasDoGrafico:
         casoParaAdicionar = Casos.objects.filter(data__lte=data).latest()
 
         graficoCasosConfirmados.append(casoParaAdicionar.confirmados)
@@ -48,8 +58,18 @@ def gerarDadosGraficos(casoAtual):
         graficoCasosObitos.append(casoParaAdicionar.obitos)
 
     
-    #converte as datas para string no formato dia/mes
-    datas = [data.strftime('%d/%m') for data in datas]
+    ''' converte as datas para string no formato dia/mes e adiciona um espaço
+        após cada data '''
+    datas = []
+
+    for data in datasExibidas:
+        datas.append(data.strftime('%d/%m'))
+        datas.append('')
+
+    #remove o espaço cadastrado na última posição
+    datas.pop()
+
+    #datas = [data.strftime('%d/%m') for data in datasExibidas]
 
     return datas, graficoCasosConfirmados, graficoCasosConfirmadosTotal, graficoCasosRecuperados, graficoCasosSuspeitos, graficoCasosDescartados, graficoCasosObitos
 
