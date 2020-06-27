@@ -50,7 +50,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'covidSjs.urls'
+ROOT_URLCONF = 'APIBoletimCovid.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +68,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'covidSjs.wsgi.application'
+WSGI_APPLICATION = 'APIBoletimCovid.wsgi.application'
 
 
 # Database
