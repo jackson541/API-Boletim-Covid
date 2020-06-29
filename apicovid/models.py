@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator
+
 from .choices import *
 
 class Caso(models.Model):
@@ -7,4 +9,5 @@ class Caso(models.Model):
     tipo = models.CharField(max_length=15, choices=TIPO_CHOICES, default='notificado')
     genero = models.CharField(max_length=10, choices=GENERO_CHOICES, default='feminino')
     faixa = models.CharField(max_length=5, choices=FAIXA_CHOICES, default='0-19')
+    quantidade = models.IntegerField(validators=[MinValueValidator(1)])
     
