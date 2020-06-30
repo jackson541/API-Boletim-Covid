@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from .models import *
+from .models import Caso, Cidade, Usuario
+
+class CidadeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cidade
+        fields = ['id', 'nome', 'numero_habitantes']
+
 
 class CasoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -15,6 +15,13 @@ from rest_framework import status
 from .models import *
 from .serializers import *
 
+class CidadeList(generics.ListCreateAPIView):
+    queryset = Cidade.objects.all()
+    serializer_class = CidadeSerializer
+
+class CidadeDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Cidade.objects.all()
+    serializer_class = CidadeSerializer
 
 class CasoList(generics.ListCreateAPIView):
     authentication_classes = [TokenAuthentication]
