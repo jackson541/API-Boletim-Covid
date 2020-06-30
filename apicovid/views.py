@@ -29,7 +29,7 @@ class CasoDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class UsuarioList(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
         #retorna apenas os usuários criados pelo admin que fez a requisição
