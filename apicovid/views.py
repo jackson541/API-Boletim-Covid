@@ -16,10 +16,16 @@ from .models import *
 from .serializers import *
 
 class CidadeList(generics.ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = Cidade.objects.all()
     serializer_class = CidadeSerializer
 
 class CidadeDetail(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = Cidade.objects.all()
     serializer_class = CidadeSerializer
 
@@ -71,17 +77,16 @@ class UsuarioList(APIView):
                         status = status.HTTP_400_BAD_REQUEST
                     )
 
-        '''
-        
-        
-        ###################################################
+        #verifica se a cidade existe
+        try:
+            cidade = Cidade.objects.get(pk = data['cidade'])
 
-        Adicionar verificação para saber se a cidade existe
-        
-        ###################################################
-        
-        
-        '''
+        except ObjectDoesNotExist:
+            pk = data['cidade']
+            return Response(
+                        {'error': f'cidade com id {pk} não encontrado'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
 
         #verifica as entradas de username e password
         try:
@@ -102,7 +107,7 @@ class UsuarioList(APIView):
         data = {
             'user': usuario.id,
             'criador': request.user.id,
-            'cidade': data['cidade']
+            'cidade': cidade.id
         }
         
         serializer = UsuarioSerializer(data=data)
