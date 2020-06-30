@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 from .choices import *
 
 class Caso(models.Model):
-    # alterar para ForeignKey quando o model de boletim for criado
+    #boletim = models.ForeignKey(Boletim, on_delete=models.CASCADE)
     boletim = models.IntegerField()
     tipo = models.CharField(max_length=15, choices=TIPO_CHOICES, default='notificado')
     genero = models.CharField(max_length=10, choices=GENERO_CHOICES, default='feminino')

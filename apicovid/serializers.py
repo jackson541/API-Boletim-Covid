@@ -10,4 +10,4 @@ class CasoSerializer(serializers.ModelSerializer):
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ['id', 'user', 'criador']
+        fields = ['id', 'user', 'criador', 'cidade']
