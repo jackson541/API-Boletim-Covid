@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 from .choices import *
 
 class Cidade(models.Model):
-    nome = models.CharField()
+    nome = models.CharField(max_length=100)
     numero_habitantes = models.IntegerField()
 
 class Caso(models.Model):
