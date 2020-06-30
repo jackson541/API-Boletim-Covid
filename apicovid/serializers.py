@@ -4,7 +4,7 @@ from .models import Caso, Cidade
 class CidadeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cidade
-        fields = ['id', 'nome', 'responsavel', 'numero_habitantes']
+        fields = ['id', 'nome', 'numero_habitantes']
 
 class CasoSerializer(serializers.ModelSerializer):
     class Meta:

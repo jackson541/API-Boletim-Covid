@@ -6,7 +6,6 @@ from .choices import *
 
 class Cidade(models.Model):
     nome = models.CharField()
-    responsavel = models.ForeignKey(User)
     numero_habitantes = models.IntegerField()
 
 class Caso(models.Model):
