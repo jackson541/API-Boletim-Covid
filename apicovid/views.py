@@ -124,6 +124,14 @@ class UsuarioDetail(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def put(self, request, pk):
+        '''
+            formato de entrada:
+            {
+                "password": string,
+                "cidade": int
+            }
+        '''
+
         try:
             usuario = Usuario.objects.get(pk=pk)
         except ObjectDoesNotExist:
@@ -138,7 +146,104 @@ class UsuarioDetail(APIView):
                         status=status.HTTP_401_UNAUTHORIZED
                     )
 
-        return Response()
+        data = JSONParser().parse(request)
+
+        #pega todos os campos passados, transfoma em uma lista e os ordena
+        keys = list(data.keys())
+        keys.sort()
+
+        camposEsperados = ['password', 'cidade']
+        camposEsperados.sort()
+        
+        if not (keys == camposEsperados):
+            return Response(
+                        {'error': 'passe todos e somente os campos obrigatórios'}, 
+                        status = status.HTTP_400_BAD_REQUEST
+                    )
+
+        #verifica se a cidade existe
+        try:
+            cidade = Cidade.objects.get(pk = data['cidade'])
+
+        except ObjectDoesNotExist:
+            id = data['cidade']
+            return Response(
+                        {'error': f'cidade com id {id} não encontrado'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+
+        data = {
+            'user': usuario.id,
+            'criador': usuario.criador.id,
+            'password': data['password'],
+            'cidade': cidade.id
+        }
+
+        #atualiza os campos do usuário passado
+        serializer = UsuarioSerializer(usuario, data=data)
+
+        if serializer.is_valid():
+            user = User.objects.get(pk=usuario.user.id)
+            user.set_password(data['password'])
+            user.save()
+
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, pk):
+        '''
+            formato de entrada:
+            {
+                "username": string,
+                "password": string,
+                "cidade": number
+            }
+        '''
+
+        try:
+            usuario = Usuario.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return Response(
+                        {'error': f'usuário com id {pk} não encontrado'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+
+        if(usuario.criador != request.user):
+            return Response(
+                        {'error': 'Você não tem autorização para editar esse usuário'},
+                        status=status.HTTP_401_UNAUTHORIZED
+                    )
+
+        data = JSONParser().parse(request)
+
+        if('cidade' in data):
+            #verifica se a cidade existe
+            try:
+                cidade = Cidade.objects.get(pk = data['cidade'])
+
+            except ObjectDoesNotExist:
+                id = data['cidade']
+                return Response(
+                            {'error': f'cidade com id {id} não encontrado'},
+                            status=status.HTTP_404_NOT_FOUND
+                        )
+
+        data = {
+            'user': usuario.id,
+            'criador': request.user.id,
+            'cidade': cidade.id
+        }
+
+        #atualiza os campos do usuário passado
+        serializer = UsuarioSerializer(usuario, data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
 
