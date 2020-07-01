@@ -111,7 +111,7 @@ class UsuarioList(APIView):
                         status = status.HTTP_400_BAD_REQUEST
                     )
 
-        resposta = verificaUsuarioEAutorizacao(data['cidade'])
+        resposta = verificaCidade(data['cidade'])
         
         #verifica se alguma coisa foi retornada
         if not resposta == None:
@@ -203,7 +203,7 @@ class UsuarioDetail(APIView):
                         status = status.HTTP_400_BAD_REQUEST
                     )
 
-        resposta = verificaUsuarioEAutorizacao(data['cidade'])
+        resposta = verificaCidade(data['cidade'])
         
         #verifica se alguma coisa foi retornada
         if not resposta == None:
@@ -253,7 +253,7 @@ class UsuarioDetail(APIView):
 
         #### procurar uma forma de aprimorar as verificações
         if('cidade' in data):
-            resposta = verificaUsuarioEAutorizacao(data['cidade'])
+            resposta = verificaCidade(data['cidade'])
         
             #verifica se alguma coisa foi retornada
             if not resposta == None:
