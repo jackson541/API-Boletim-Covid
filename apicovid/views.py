@@ -120,12 +120,35 @@ class UsuarioList(APIView):
             serializer.save()
             return Response(serializer.data)
 
+        usuario.delete()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UsuarioDetail(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, pk):
+        try:
+            usuario = Usuario.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return Response(
+                        {'error': f'usuário com id {pk} não encontrado'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+
+        if(usuario.criador != request.user):
+            return Response(
+                        {'error': 'Você não tem autorização para editar esse usuário'},
+                        status=status.HTTP_401_UNAUTHORIZED
+                    )
+
+        #o serializer atual não aceita modificações nos campos
+        serializer = UsuarioSerializer(usuario)
+        newSerializer = serializer.data
+        newSerializer['username'] = usuario.user.get_username()
+
+        return Response(newSerializer)
 
     def put(self, request, pk):
         '''
@@ -200,7 +223,6 @@ class UsuarioDetail(APIView):
         '''
             formato de entrada:
             {
-                "username": string,
                 "password": string,
                 "cidade": number
             }
@@ -220,8 +242,10 @@ class UsuarioDetail(APIView):
                         status=status.HTTP_401_UNAUTHORIZED
                     )
 
+
         data = JSONParser().parse(request)
 
+        #### procurar uma forma de aprimorar as verificações
         if('cidade' in data):
             #verifica se a cidade existe
             try:
@@ -233,6 +257,14 @@ class UsuarioDetail(APIView):
                             {'error': f'cidade com id {id} não encontrado'},
                             status=status.HTTP_404_NOT_FOUND
                         )
+
+        else:
+            cidade = usuario.cidade
+
+        if ('password' in data):
+            user = User.objects.get(pk=usuario.user.id)
+            user.set_password(data['password'])
+            user.save()
 
         data = {
             'user': usuario.id,
@@ -249,6 +281,23 @@ class UsuarioDetail(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+    def delete(self, request, pk):
+        try:
+            usuario = Usuario.objects.get(pk=pk)
+        except ObjectDoesNotExist:
+            return Response(
+                        {'error': f'usuário com id {pk} não encontrado'},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
 
+        if(usuario.criador != request.user):
+            return Response(
+                        {'error': 'Você não tem autorização para editar esse usuário'},
+                        status=status.HTTP_401_UNAUTHORIZED
+                    )
+
+        usuario.user.delete()
+
+        return Response()
 
 
