@@ -50,6 +50,10 @@ class UsuarioList(APIView):
         #retorna apenas os usuários criados pelo admin que fez a requisição
         usuarios = Usuario.objects.filter(criador=request.user)
         serializer = UsuarioSerializer(usuarios, many=True)
+        
+        #adiciona os usernames aos objetos retornados
+        for aux in serializer.data:
+            aux['username'] = User.objects.get(pk=aux['user']).get_username()
 
         return Response(serializer.data)
 
