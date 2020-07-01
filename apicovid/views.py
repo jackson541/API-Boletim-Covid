@@ -42,6 +42,36 @@ class CasoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CasoSerializer
 
 
+#### funções para verificação
+def verificaUsuarioEAutorizacao(request, pk):
+    try:
+        print('1')
+        usuario = Usuario.objects.get(pk=pk)
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'usuário com id {pk} não encontrado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+    if(usuario.criador != request.user):
+        return Response(
+                    {'error': 'Você não tem autorização para editar esse usuário'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+def verificaCidade(pk):
+    #verifica se a cidade existe
+    try:
+        cidade = Cidade.objects.get(pk = pk)
+
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'cidade com id {pk} não encontrado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+
+#### funções para as rotas
 class UsuarioList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAdminUser]
@@ -52,8 +82,8 @@ class UsuarioList(APIView):
         serializer = UsuarioSerializer(usuarios, many=True)
         
         #adiciona os usernames aos objetos retornados
-        for aux in serializer.data:
-            aux['username'] = User.objects.get(pk=aux['user']).get_username()
+        for usuario in serializer.data:
+            usuario['username'] = User.objects.get(pk=usuario['user']).get_username()
 
         return Response(serializer.data)
 
@@ -81,16 +111,13 @@ class UsuarioList(APIView):
                         status = status.HTTP_400_BAD_REQUEST
                     )
 
-        #verifica se a cidade existe
-        try:
-            cidade = Cidade.objects.get(pk = data['cidade'])
+        resposta = verificaUsuarioEAutorizacao(data['cidade'])
+        
+        #verifica se alguma coisa foi retornada
+        if not resposta == None:
+            return resposta
 
-        except ObjectDoesNotExist:
-            pk = data['cidade']
-            return Response(
-                        {'error': f'cidade com id {pk} não encontrado'},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
+        cidade = Cidade.objects.get(pk = data['cidade'])
 
         #verifica as entradas de username e password
         try:
@@ -129,19 +156,13 @@ class UsuarioDetail(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, pk):
-        try:
-            usuario = Usuario.objects.get(pk=pk)
-        except ObjectDoesNotExist:
-            return Response(
-                        {'error': f'usuário com id {pk} não encontrado'},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
+        resposta = verificaUsuarioEAutorizacao(request, pk)
+        
+        #verifica se alguma coisa foi retornada
+        if not resposta == None:
+            return resposta
 
-        if(usuario.criador != request.user):
-            return Response(
-                        {'error': 'Você não tem autorização para editar esse usuário'},
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
+        usuario = Usuario.objects.get(pk=pk)
 
         #o serializer atual não aceita modificações nos campos
         serializer = UsuarioSerializer(usuario)
@@ -159,19 +180,13 @@ class UsuarioDetail(APIView):
             }
         '''
 
-        try:
-            usuario = Usuario.objects.get(pk=pk)
-        except ObjectDoesNotExist:
-            return Response(
-                        {'error': f'usuário com id {pk} não encontrado'},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
+        resposta = verificaUsuarioEAutorizacao(request, pk)
+        
+        #verifica se alguma coisa foi retornada
+        if not resposta == None:
+            return resposta
 
-        if(usuario.criador != request.user):
-            return Response(
-                        {'error': 'Você não tem autorização para editar esse usuário'},
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
+        usuario = Usuario.objects.get(pk=pk)
 
         data = JSONParser().parse(request)
 
@@ -188,19 +203,16 @@ class UsuarioDetail(APIView):
                         status = status.HTTP_400_BAD_REQUEST
                     )
 
-        #verifica se a cidade existe
-        try:
-            cidade = Cidade.objects.get(pk = data['cidade'])
+        resposta = verificaUsuarioEAutorizacao(data['cidade'])
+        
+        #verifica se alguma coisa foi retornada
+        if not resposta == None:
+            return resposta
 
-        except ObjectDoesNotExist:
-            id = data['cidade']
-            return Response(
-                        {'error': f'cidade com id {id} não encontrado'},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
+        cidade = Cidade.objects.get(pk = data['cidade'])
 
         data = {
-            'user': usuario.id,
+            'user': usuario.user.id,
             'criador': usuario.criador.id,
             'password': data['password'],
             'cidade': cidade.id
@@ -228,35 +240,26 @@ class UsuarioDetail(APIView):
             }
         '''
 
-        try:
-            usuario = Usuario.objects.get(pk=pk)
-        except ObjectDoesNotExist:
-            return Response(
-                        {'error': f'usuário com id {pk} não encontrado'},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
+        resposta = verificaUsuarioEAutorizacao(request, pk)
+        
+        #verifica se alguma coisa foi retornada
+        if not resposta == None:
+            return resposta
 
-        if(usuario.criador != request.user):
-            return Response(
-                        {'error': 'Você não tem autorização para editar esse usuário'},
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
+        usuario = Usuario.objects.get(pk=pk)
 
 
         data = JSONParser().parse(request)
 
         #### procurar uma forma de aprimorar as verificações
         if('cidade' in data):
-            #verifica se a cidade existe
-            try:
-                cidade = Cidade.objects.get(pk = data['cidade'])
+            resposta = verificaUsuarioEAutorizacao(data['cidade'])
+        
+            #verifica se alguma coisa foi retornada
+            if not resposta == None:
+                return resposta
 
-            except ObjectDoesNotExist:
-                id = data['cidade']
-                return Response(
-                            {'error': f'cidade com id {id} não encontrado'},
-                            status=status.HTTP_404_NOT_FOUND
-                        )
+            cidade = Cidade.objects.get(pk = data['cidade'])
 
         else:
             cidade = usuario.cidade
@@ -267,7 +270,7 @@ class UsuarioDetail(APIView):
             user.save()
 
         data = {
-            'user': usuario.id,
+            'user': usuario.user.id,
             'criador': request.user.id,
             'cidade': cidade.id
         }
@@ -282,19 +285,13 @@ class UsuarioDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def delete(self, request, pk):
-        try:
-            usuario = Usuario.objects.get(pk=pk)
-        except ObjectDoesNotExist:
-            return Response(
-                        {'error': f'usuário com id {pk} não encontrado'},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
+        resposta = verificaUsuarioEAutorizacao(request, pk)
+        
+        #verifica se alguma coisa foi retornada
+        if not resposta == None:
+            return resposta
 
-        if(usuario.criador != request.user):
-            return Response(
-                        {'error': 'Você não tem autorização para editar esse usuário'},
-                        status=status.HTTP_401_UNAUTHORIZED
-                    )
+        usuario = Usuario.objects.get(pk=pk)
 
         usuario.user.delete()
 
