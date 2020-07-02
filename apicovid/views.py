@@ -4,6 +4,7 @@ from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import generics
+from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
@@ -14,33 +15,6 @@ from rest_framework import status
 
 from .models import *
 from .serializers import *
-
-class CidadeList(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = Cidade.objects.all()
-    serializer_class = CidadeSerializer
-
-class CidadeDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = Cidade.objects.all()
-    serializer_class = CidadeSerializer
-
-class CasoList(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    
-    queryset = Caso.objects.all()
-    serializer_class = CasoSerializer
-
-
-class CasoDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Caso.objects.all()
-    serializer_class = CasoSerializer
-
 
 #### funções para verificação
 def verificaUsuarioEAutorizacao(request, pk):
@@ -63,6 +37,13 @@ def verificaCidade(pk):
     try:
         cidade = Cidade.objects.get(pk = pk)
 
+        #verifica se a cidade já foi deletada antes
+        if cidade.ativo == False:
+            return Response(
+                    {'error': f'cidade com id {pk} foi deletada'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
     except ObjectDoesNotExist:
         return Response(
                     {'error': f'cidade com id {pk} não encontrado'},
@@ -71,6 +52,81 @@ def verificaCidade(pk):
 
 
 #### funções para as rotas
+class CidadeList(generics.ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Cidade.objects.all()
+    serializer_class = CidadeSerializer
+
+    def get_queryset(self):
+        return Cidade.objects.filter(ativo=True)
+
+
+class CidadeDetail( mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Cidade.objects.all()
+    serializer_class = CidadeSerializer
+
+    def get(self, request, *args, **kwargs):
+        resposta = verificaCidade(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        resposta = verificaCidade(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        resposta = verificaCidade(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, pk):
+        resposta = verificaCidade(pk)
+        
+        if not resposta == None:
+            return resposta
+
+        cidade = Cidade.objects.get(pk=pk)
+
+        serializer = CidadeSerializer(cidade, data={'ativo': False}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response()
+
+
+#### Caso
+class CasoList(generics.ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    queryset = Caso.objects.all()
+    serializer_class = CasoSerializer
+
+
+class CasoDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Caso.objects.all()
+    serializer_class = CasoSerializer
+
+
+#### Usuario
 class UsuarioList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAdminUser]
