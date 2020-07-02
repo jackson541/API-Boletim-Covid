@@ -10,10 +10,10 @@ class CidadeSerializer(serializers.ModelSerializer):
 class CasoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Caso
-        fields = ['id', 'boletim', 'tipo', 'genero', 'faixa', 'quantidade']
+        fields = ['id', 'boletim', 'tipo', 'genero', 'faixa', 'quantidade', 'ativo']
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ['id', 'user', 'criador', 'cidade']
+        fields = ['id', 'user', 'criador', 'cidade', 'ativo']

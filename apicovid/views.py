@@ -46,7 +46,25 @@ def verificaCidade(pk):
 
     except ObjectDoesNotExist:
         return Response(
-                    {'error': f'cidade com id {pk} não encontrado'},
+                    {'error': f'cidade com id {pk} não encontrada'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+def verificaCaso(pk):
+    #verifica se o caso existe
+    try:
+        caso = Caso.objects.get(pk = pk)
+
+        #verifica se o caso já foi deletado antes
+        if caso.ativo == False:
+            return Response(
+                    {'error': f'caso com id {pk} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'caso com id {pk} não encontrado'},
                     status=status.HTTP_404_NOT_FOUND
                 )
 
@@ -120,10 +138,57 @@ class CasoList(generics.ListCreateAPIView):
     queryset = Caso.objects.all()
     serializer_class = CasoSerializer
 
+    def get_queryset(self):
+        return Caso.objects.filter(ativo=True)
 
-class CasoDetail(generics.RetrieveUpdateDestroyAPIView):
+
+class CasoDetail(   mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = Caso.objects.all()
     serializer_class = CasoSerializer
+
+    def get(self, request, *args, **kwargs):
+        resposta = verificaCaso(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        resposta = verificaCaso(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        resposta = verificaCaso(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, pk):
+        resposta = verificaCaso(pk)
+        
+        if not resposta == None:
+            return resposta
+
+        caso = Caso.objects.get(pk=pk)
+
+        serializer = CasoSerializer(caso, data={'ativo': False}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response()
 
 
 #### Usuario
