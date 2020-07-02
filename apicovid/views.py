@@ -45,7 +45,6 @@ class CasoDetail(generics.RetrieveUpdateDestroyAPIView):
 #### funções para verificação
 def verificaUsuarioEAutorizacao(request, pk):
     try:
-        print('1')
         usuario = Usuario.objects.get(pk=pk)
     except ObjectDoesNotExist:
         return Response(
