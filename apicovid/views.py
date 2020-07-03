@@ -78,7 +78,6 @@ def verificaCaso(pk):
 
 #### funções para as rotas
 class CidadeList(generics.ListAPIView):
-
     queryset = Cidade.objects.all()
     serializer_class = CidadeSerializer
 
@@ -89,9 +88,6 @@ class CidadeList(generics.ListAPIView):
 
 class CidadeDetail( mixins.RetrieveModelMixin,
                     generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.AllowAny]
-
     queryset = Cidade.objects.all()
     serializer_class = CidadeSerializer
 
