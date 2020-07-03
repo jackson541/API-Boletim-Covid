@@ -70,7 +70,7 @@ def verificaCaso(pk):
 
 
 #### funções para as rotas
-class CidadeList(generics.ListCreateAPIView):
+class CidadeList(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -82,7 +82,6 @@ class CidadeList(generics.ListCreateAPIView):
 
 
 class CidadeDetail( mixins.RetrieveModelMixin,
-                    mixins.UpdateModelMixin,
                     generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -97,37 +96,6 @@ class CidadeDetail( mixins.RetrieveModelMixin,
             return resposta
 
         return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        resposta = verificaCidade(kwargs['pk'])
-
-        if not resposta == None:
-            return resposta
-
-        return self.update(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        resposta = verificaCidade(kwargs['pk'])
-
-        if not resposta == None:
-            return resposta
-
-        return self.partial_update(request, *args, **kwargs)
-
-    def delete(self, request, pk):
-        resposta = verificaCidade(pk)
-        
-        if not resposta == None:
-            return resposta
-
-        cidade = Cidade.objects.get(pk=pk)
-
-        serializer = CidadeSerializer(cidade, data={'ativo': False}, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-
-        return Response()
 
 
 #### Caso
