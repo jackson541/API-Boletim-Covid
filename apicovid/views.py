@@ -20,6 +20,13 @@ from .serializers import *
 def verificaUsuarioEAutorizacao(request, pk):
     try:
         usuario = Usuario.objects.get(pk=pk)
+
+        if usuario.ativo == False:
+            return Response(
+                    {'error': f'usuário com id {pk} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
     except ObjectDoesNotExist:
         return Response(
                     {'error': f'usuário com id {pk} não encontrado'},
@@ -72,7 +79,7 @@ def verificaCaso(pk):
 #### funções para as rotas
 class CidadeList(generics.ListAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     queryset = Cidade.objects.all()
     serializer_class = CidadeSerializer
@@ -84,7 +91,7 @@ class CidadeList(generics.ListAPIView):
 class CidadeDetail( mixins.RetrieveModelMixin,
                     generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     queryset = Cidade.objects.all()
     serializer_class = CidadeSerializer
@@ -166,7 +173,7 @@ class UsuarioList(APIView):
 
     def get(self, request):
         #retorna apenas os usuários criados pelo admin que fez a requisição
-        usuarios = Usuario.objects.filter(criador=request.user)
+        usuarios = Usuario.objects.filter(criador=request.user, ativo=True)
         serializer = UsuarioSerializer(usuarios, many=True)
         
         #adiciona os usernames aos objetos retornados
@@ -381,7 +388,10 @@ class UsuarioDetail(APIView):
 
         usuario = Usuario.objects.get(pk=pk)
 
-        usuario.user.delete()
+        serializer = UsuarioSerializer(usuario, data={'ativo': False}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
 
         return Response()
 
