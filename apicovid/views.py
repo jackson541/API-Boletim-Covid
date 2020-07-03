@@ -78,12 +78,11 @@ def verificaCaso(pk):
 
 #### funções para as rotas
 class CidadeList(generics.ListAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.AllowAny]
 
     queryset = Cidade.objects.all()
     serializer_class = CidadeSerializer
 
+    #chamada quando o método Get faz a requisição de usuário ao DB
     def get_queryset(self):
         return Cidade.objects.filter(ativo=True)
 
