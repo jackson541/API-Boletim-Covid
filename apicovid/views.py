@@ -4,6 +4,7 @@ from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework import generics
+from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
@@ -15,37 +16,17 @@ from rest_framework import status
 from .models import *
 from .serializers import *
 
-class CidadeList(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = Cidade.objects.all()
-    serializer_class = CidadeSerializer
-
-class CidadeDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = Cidade.objects.all()
-    serializer_class = CidadeSerializer
-
-class CasoList(generics.ListCreateAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-    
-    queryset = Caso.objects.all()
-    serializer_class = CasoSerializer
-
-
-class CasoDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Caso.objects.all()
-    serializer_class = CasoSerializer
-
-
 #### funções para verificação
 def verificaUsuarioEAutorizacao(request, pk):
     try:
         usuario = Usuario.objects.get(pk=pk)
+
+        if usuario.ativo == False:
+            return Response(
+                    {'error': f'usuário com id {pk} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
     except ObjectDoesNotExist:
         return Response(
                     {'error': f'usuário com id {pk} não encontrado'},
@@ -63,21 +44,131 @@ def verificaCidade(pk):
     try:
         cidade = Cidade.objects.get(pk = pk)
 
+        #verifica se a cidade já foi deletada antes
+        if cidade.ativo == False:
+            return Response(
+                    {'error': f'cidade com id {pk} foi deletada'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
     except ObjectDoesNotExist:
         return Response(
-                    {'error': f'cidade com id {pk} não encontrado'},
+                    {'error': f'cidade com id {pk} não encontrada'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+def verificaCaso(pk):
+    #verifica se o caso existe
+    try:
+        caso = Caso.objects.get(pk = pk)
+
+        #verifica se o caso já foi deletado antes
+        if caso.ativo == False:
+            return Response(
+                    {'error': f'caso com id {pk} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'caso com id {pk} não encontrado'},
                     status=status.HTTP_404_NOT_FOUND
                 )
 
 
 #### funções para as rotas
+class CidadeList(generics.ListAPIView):
+    queryset = Cidade.objects.all()
+    serializer_class = CidadeSerializer
+
+    #chamada quando o método Get faz a requisição de usuário ao DB
+    def get_queryset(self):
+        return Cidade.objects.filter(ativo=True)
+
+
+class CidadeDetail( mixins.RetrieveModelMixin,
+                    generics.GenericAPIView):
+    queryset = Cidade.objects.all()
+    serializer_class = CidadeSerializer
+
+    def get(self, request, *args, **kwargs):
+        resposta = verificaCidade(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.retrieve(request, *args, **kwargs)
+
+
+#### Caso
+class CasoList(generics.ListCreateAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    
+    queryset = Caso.objects.all()
+    serializer_class = CasoSerializer
+
+    def get_queryset(self):
+        return Caso.objects.filter(ativo=True)
+
+
+class CasoDetail(   mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    queryset = Caso.objects.all()
+    serializer_class = CasoSerializer
+
+    def get(self, request, *args, **kwargs):
+        resposta = verificaCaso(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        resposta = verificaCaso(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        resposta = verificaCaso(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, pk):
+        resposta = verificaCaso(pk)
+        
+        if not resposta == None:
+            return resposta
+
+        caso = Caso.objects.get(pk=pk)
+
+        serializer = CasoSerializer(caso, data={'ativo': False}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response()
+
+
+#### Usuario
 class UsuarioList(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
         #retorna apenas os usuários criados pelo admin que fez a requisição
-        usuarios = Usuario.objects.filter(criador=request.user)
+        usuarios = Usuario.objects.filter(criador=request.user, ativo=True)
         serializer = UsuarioSerializer(usuarios, many=True)
         
         #adiciona os usernames aos objetos retornados
@@ -292,7 +383,10 @@ class UsuarioDetail(APIView):
 
         usuario = Usuario.objects.get(pk=pk)
 
-        usuario.user.delete()
+        serializer = UsuarioSerializer(usuario, data={'ativo': False}, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
 
         return Response()
 
