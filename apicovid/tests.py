@@ -354,7 +354,7 @@ class CasoTeste(APITestCase):
             'faixa': '12-20',
         }
 
-        response = self.client.put(url, NOVOS_DADOS_ERRADOS, format='json')
+        response = self.client.patch(url, NOVOS_DADOS_ERRADOS, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
