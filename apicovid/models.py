@@ -9,9 +9,12 @@ class Cidade(models.Model):
     numero_habitantes = models.IntegerField()
     ativo = models.BooleanField(default=True, blank=True)
 
+class Boletim(models.Model):
+    cidade = models.ForeignKey(Cidade, on_delete=models.CASCADE)
+    data = models.DateTimeField()
+
 class Caso(models.Model):
-    #boletim = models.ForeignKey(Boletim, on_delete=models.CASCADE)
-    boletim = models.IntegerField()
+    boletim = models.ForeignKey(Boletim, on_delete=models.CASCADE)
     tipo = models.CharField(max_length=15, choices=TIPO_CHOICES, default='notificado')
     genero = models.CharField(max_length=10, choices=GENERO_CHOICES, default='feminino')
     faixa = models.CharField(max_length=5, choices=FAIXA_CHOICES, default='0-19')

@@ -391,3 +391,28 @@ class UsuarioDetail(APIView):
         return Response()
 
 
+#### Boletim
+class BoletimList(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(self, request):
+        boletins = Boletim.objects.all()
+        
+        serializer = BoletimSerializer(boletins, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        data = JSONParser().parse(request)
+
+        usuario = Usuario.objects.get(user=request.user.id)
+
+        data['cidade'] = usuario.cidade.id
+
+        serializer = BoletimSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors)
