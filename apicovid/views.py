@@ -473,6 +473,9 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         serializer = BoletimSerializer(boletim, data={'ativo': False}, partial=True)
 
         if serializer.is_valid():
+            casosRelacionados = Caso.objects.filter(boletim=boletim.id)
+            casosRelacionados.update(ativo=False)
+            
             serializer.save()
 
         return Response()
