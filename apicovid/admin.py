@@ -5,6 +5,9 @@ def deletarCidade(modeladmin, request, queryset):
     for cidade in queryset.values():
         usuarios = Usuario.objects.filter(cidade=cidade['id'])
         usuarios.update(ativo=False)
+
+        boletins = Boletim.objects.filter(cidade=cidade['id'])
+        boletins.update(ativo=False)
         
     queryset.update(ativo=False)
 
@@ -13,6 +16,9 @@ def restaurarCidade(modeladmin, request, queryset):
     for cidade in queryset.values():
         usuarios = Usuario.objects.filter(cidade=cidade['id'])
         usuarios.update(ativo=True)
+
+        boletins = Boletim.objects.filter(cidade=cidade['id'])
+        boletins.update(ativo=True)
         
     queryset.update(ativo=True)
     
