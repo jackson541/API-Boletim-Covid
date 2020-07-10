@@ -75,6 +75,24 @@ def verificaCaso(pk):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
+def verificaBoletim(pk):
+    #verifica se o boletim existe
+    try:
+        boletim = Boletim.objects.get(pk = pk)
+
+        #verifica se o boletim já foi deletado antes
+        if boletim.ativo == False:
+            return Response(
+                    {'error': f'boletim com id {pk} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'boletim com id {pk} não encontrado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
 
 #### funções para as rotas
 class CidadeList(generics.ListAPIView):
@@ -384,27 +402,78 @@ class UsuarioDetail(APIView):
 
 
 #### Boletim
-class BoletimList(APIView):
+class BoletimList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    def get(self, request):
-        boletins = Boletim.objects.all()
-        
-        serializer = BoletimSerializer(boletins, many=True)
-        return Response(serializer.data)
+    queryset = Boletim.objects.all()
+    serializer_class = BoletimSerializer
 
-    def post(self, request):
-        data = JSONParser().parse(request)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Boletim.objects.filter(ativo=True)
+
+    def post(self, request, *args, **kwargs):
+        usuario = Usuario.objects.get(user=request.user.id)
+        request.data['cidade'] = usuario.cidade.id
+
+        return self.create(request, *args, **kwargs)
+
+
+class BoletimDetail(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    queryset = Boletim.objects.all()
+    serializer_class = BoletimSerializer
+
+    def get(self, request, *args, **kwargs):
+        resposta = verificaBoletim(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.retrieve(request, *args, **kwargs)
+
+        
+    def put(self, request, *args, **kwargs):
+        resposta = verificaBoletim(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
 
         usuario = Usuario.objects.get(user=request.user.id)
+        request.data['cidade'] = usuario.cidade.id
 
-        data['cidade'] = usuario.cidade.id
+        return self.update(request, *args, **kwargs)
 
-        serializer = BoletimSerializer(data=data)
+    def patch(self, request, *args, **kwargs):
+        resposta = verificaBoletim(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        usuario = Usuario.objects.get(user=request.user.id)
+        request.data['cidade'] = usuario.cidade.id
+
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, pk):
+        resposta = verificaBoletim(pk)
+        
+        if not resposta == None:
+            return resposta
+
+        boletim = Boletim.objects.get(pk=pk)
+
+        serializer = BoletimSerializer(boletim, data={'ativo': False}, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+
+        return Response()
         
-        return Response(serializer.errors)

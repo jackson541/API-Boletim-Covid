@@ -13,5 +13,6 @@ urlpatterns = [
     path('usuarios/<int:pk>/', views.UsuarioDetail.as_view(), name='read_update_delete_usuario'),
     # URLs Boletim
     path('boletins/', views.BoletimList.as_view(), name='list_create_boletim'),
+    path('boletins/<int:pk>/', views.BoletimDetail.as_view(), name='read_update_delete_boletim'),
 
 ]

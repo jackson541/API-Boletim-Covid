@@ -11,7 +11,7 @@ class BoletimSerializer(serializers.ModelSerializer):
 
     class Meta:
         model= Boletim
-        fields = ['id', 'cidade', 'data', 'casos']
+        fields = ['id', 'cidade', 'data', 'ativo', 'casos']
 
     def get_casos(self, boletim):
         tipos = ['confirmado', 'tratamento', 'internado', 'recuperado', 'suspeito', 'obito', 'descartado', 'notificado']

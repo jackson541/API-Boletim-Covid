@@ -12,6 +12,7 @@ class Cidade(models.Model):
 class Boletim(models.Model):
     cidade = models.ForeignKey(Cidade, on_delete=models.CASCADE)
     data = models.DateTimeField()
+    ativo = models.BooleanField(default=True, blank=True)
 
 class Caso(models.Model):
     boletim = models.ForeignKey(Boletim, on_delete=models.CASCADE)
