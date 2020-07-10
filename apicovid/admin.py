@@ -8,6 +8,10 @@ def deletarCidade(modeladmin, request, queryset):
 
         boletins = Boletim.objects.filter(cidade=cidade['id'])
         boletins.update(ativo=False)
+
+        for boletim in boletins:
+            casosRelacionados = Caso.objects.filter(boletim=boletim.id)
+            casosRelacionados.update(ativo=False)
         
     queryset.update(ativo=False)
 
@@ -19,6 +23,10 @@ def restaurarCidade(modeladmin, request, queryset):
 
         boletins = Boletim.objects.filter(cidade=cidade['id'])
         boletins.update(ativo=True)
+
+        for boletim in boletins:
+            casosRelacionados = Caso.objects.filter(boletim=boletim.id)
+            casosRelacionados.update(ativo=True)
         
     queryset.update(ativo=True)
     
@@ -31,3 +39,5 @@ class CidadeAdmin(admin.ModelAdmin):
 
 admin.site.register(Usuario)
 admin.site.register(Cidade, CidadeAdmin)
+admin.site.register(Boletim)
+admin.site.register(Caso)
