@@ -170,10 +170,6 @@ class UsuarioList(APIView):
         #retorna apenas os usuários criados pelo admin que fez a requisição
         usuarios = Usuario.objects.filter(criador=request.user, ativo=True)
         serializer = UsuarioSerializer(usuarios, many=True)
-        
-        #adiciona os usernames aos objetos retornados
-        for usuario in serializer.data:
-            usuario['username'] = User.objects.get(pk=usuario['user']).get_username()
 
         return Response(serializer.data)
 
@@ -253,13 +249,9 @@ class UsuarioDetail(APIView):
             return resposta
 
         usuario = Usuario.objects.get(pk=pk)
-
-        #o serializer atual não aceita modificações nos campos
         serializer = UsuarioSerializer(usuario)
-        newSerializer = serializer.data
-        newSerializer['username'] = usuario.user.get_username()
 
-        return Response(newSerializer)
+        return Response(serializer.data)
 
     def put(self, request, pk):
         '''

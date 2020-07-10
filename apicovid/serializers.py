@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from functools import reduce
 from .models import Caso, Cidade, Usuario, Boletim
 
 class CidadeSerializer(serializers.ModelSerializer):
@@ -22,6 +21,7 @@ class BoletimSerializer(serializers.ModelSerializer):
         for tipo in tipos:
             casosRelacionadosQuery = Caso.objects.filter(boletim=boletim.id, tipo=tipo)
 
+            #soma o número de todos os casos filtrados
             totalNumCasos = 0
             for caso in casosRelacionadosQuery:
                totalNumCasos += caso.quantidade
@@ -39,6 +39,11 @@ class CasoSerializer(serializers.ModelSerializer):
         fields = ['id', 'boletim', 'tipo', 'genero', 'faixa', 'quantidade', 'ativo']
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+
     class Meta:
         model = Usuario
-        fields = ['id', 'user', 'criador', 'cidade', 'ativo']
+        fields = ['id', 'user', 'criador', 'cidade', 'ativo', 'username']
+
+    def get_username(self, usuario):
+        return usuario.user.username
