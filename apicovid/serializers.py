@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db.models import Sum
 from .models import Caso, Cidade, Usuario, Boletim
 
 class CidadeSerializer(serializers.ModelSerializer):
@@ -15,20 +16,17 @@ class BoletimSerializer(serializers.ModelSerializer):
 
     def get_casos(self, boletim):
         tipos = ['confirmado', 'tratamento', 'internado', 'recuperado', 'suspeito', 'obito', 'descartado', 'notificado']
-        
+
         casosRelacionados = []
 
         for tipo in tipos:
-            casosRelacionadosQuery = Caso.objects.filter(boletim=boletim.id, tipo=tipo)
-
-            #soma o número de todos os casos filtrados
-            totalNumCasos = 0
-            for caso in casosRelacionadosQuery:
-               totalNumCasos += caso.quantidade
+            # soma os valores de 'quantidade' para casos com mesmo tipo, será 
+            # retornado null se não tiver nenhum caso
+            totalNumeroCasos = Caso.objects.filter(boletim=boletim.id, tipo=tipo).aggregate(Sum('quantidade'))
 
             casosRelacionados.append({
                     "tipo": tipo,
-                    "quantidade": totalNumCasos
+                    "quantidade": totalNumeroCasos['quantidade__sum'] if totalNumeroCasos['quantidade__sum'] else 0
                 })
 
         return casosRelacionados
