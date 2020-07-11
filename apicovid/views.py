@@ -75,6 +75,24 @@ def verificaCaso(pk):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
+def verificaBoletim(pk):
+    #verifica se o boletim existe
+    try:
+        boletim = Boletim.objects.get(pk = pk)
+
+        #verifica se o boletim já foi deletado antes
+        if boletim.ativo == False:
+            return Response(
+                    {'error': f'boletim com id {pk} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'boletim com id {pk} não encontrado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
 
 #### funções para as rotas
 class CidadeList(generics.ListAPIView):
@@ -170,10 +188,6 @@ class UsuarioList(APIView):
         #retorna apenas os usuários criados pelo admin que fez a requisição
         usuarios = Usuario.objects.filter(criador=request.user, ativo=True)
         serializer = UsuarioSerializer(usuarios, many=True)
-        
-        #adiciona os usernames aos objetos retornados
-        for usuario in serializer.data:
-            usuario['username'] = User.objects.get(pk=usuario['user']).get_username()
 
         return Response(serializer.data)
 
@@ -253,13 +267,9 @@ class UsuarioDetail(APIView):
             return resposta
 
         usuario = Usuario.objects.get(pk=pk)
-
-        #o serializer atual não aceita modificações nos campos
         serializer = UsuarioSerializer(usuario)
-        newSerializer = serializer.data
-        newSerializer['username'] = usuario.user.get_username()
 
-        return Response(newSerializer)
+        return Response(serializer.data)
 
     def put(self, request, pk):
         '''
@@ -391,3 +401,82 @@ class UsuarioDetail(APIView):
         return Response()
 
 
+#### Boletim
+class BoletimList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    queryset = Boletim.objects.all()
+    serializer_class = BoletimSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Boletim.objects.filter(ativo=True)
+
+    def post(self, request, *args, **kwargs):
+        usuario = Usuario.objects.get(user=request.user.id)
+        request.data['cidade'] = usuario.cidade.id
+
+        return self.create(request, *args, **kwargs)
+
+
+class BoletimDetail(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    generics.GenericAPIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    queryset = Boletim.objects.all()
+    serializer_class = BoletimSerializer
+
+    def get(self, request, *args, **kwargs):
+        resposta = verificaBoletim(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        return self.retrieve(request, *args, **kwargs)
+
+        
+    def put(self, request, *args, **kwargs):
+        resposta = verificaBoletim(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        usuario = Usuario.objects.get(user=request.user.id)
+        request.data['cidade'] = usuario.cidade.id
+
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        resposta = verificaBoletim(kwargs['pk'])
+
+        if not resposta == None:
+            return resposta
+
+        usuario = Usuario.objects.get(user=request.user.id)
+        request.data['cidade'] = usuario.cidade.id
+
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, pk):
+        resposta = verificaBoletim(pk)
+        
+        if not resposta == None:
+            return resposta
+
+        boletim = Boletim.objects.get(pk=pk)
+
+        serializer = BoletimSerializer(boletim, data={'ativo': False}, partial=True)
+
+        if serializer.is_valid():
+            casosRelacionados = Caso.objects.filter(boletim=boletim.id)
+            casosRelacionados.update(ativo=False)
+            
+            serializer.save()
+
+        return Response()
+        
