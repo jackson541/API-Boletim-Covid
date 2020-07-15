@@ -27,6 +27,13 @@ Install dependencies
 pip3 install -r requirements.txt
 ```
 
+Configure database
+* Install [PostgreSQL](https://www.postgresql.org/)
+* Go to the ```settings.py``` file in the ```ApiBoletimCovid``` folder
+* Search for ```DATABASES``` in settings.py
+* Configure your database information (name, password and port) in the option ```default```
+* Create a table in your database with the name ```apicovid```
+
 Apply Migrations
 ```sh
 python3 manage.py makemigrations
@@ -36,6 +43,13 @@ python3 manage.py migrate
 Run local server
 ```
 python3 manage.py runserver
+```
+
+
+## Routes documentation
+After running the project, go to the route:
+```
+http://localhost:8000/swagger/
 ```
 
 
