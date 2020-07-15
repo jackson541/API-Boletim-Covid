@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import *
 
+
 def deletarCidade(modeladmin, request, queryset):
     listaIdsCidades = queryset.values_list('id', flat=True)
     queryset.update(ativo=False)
@@ -12,7 +13,7 @@ def deletarCidade(modeladmin, request, queryset):
     boletins.update(ativo=False)
 
     listaIdsBoletins = boletins.values_list('id', flat=True)
-    
+
     casosRelacionados = Caso.objects.filter(boletim__in=listaIdsBoletins)
     casosRelacionados.update(ativo=False)
 
@@ -28,16 +29,17 @@ def restaurarCidade(modeladmin, request, queryset):
     boletins.update(ativo=True)
 
     listaIdsBoletins = boletins.values_list('id', flat=True)
-    
+
     casosRelacionados = Caso.objects.filter(boletim__in=listaIdsBoletins)
     casosRelacionados.update(ativo=True)
-    
+
 
 deletarCidade.short_description = "Marcar como inativa"
 restaurarCidade.short_description = "Marcar como ativa"
 
+
 class CidadeAdmin(admin.ModelAdmin):
-    actions=[deletarCidade, restaurarCidade]
+    actions = [deletarCidade, restaurarCidade]
 
 admin.site.register(Usuario)
 admin.site.register(Cidade, CidadeAdmin)

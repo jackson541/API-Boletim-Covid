@@ -1,4 +1,4 @@
-#arquivo para armazenar todas as choices utilizadas no models.py
+# Arquivo para armazenar todas as choices utilizadas no models.py
 
 TIPO_CHOICES = [
     ('confirmado', 'Confirmado'),
