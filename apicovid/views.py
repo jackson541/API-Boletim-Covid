@@ -61,25 +61,6 @@ def verificaCidade(pk):
                 )
 
 
-def verificaCaso(pk):
-    # Verifica se o caso existe
-    try:
-        caso = Caso.objects.get(pk=pk)
-
-        # Verifica se o caso já foi deletado antes
-        if not caso.ativo:
-            return Response(
-                    {'error': f'caso com id {pk} foi deletado'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-
-    except ObjectDoesNotExist:
-        return Response(
-                    {'error': f'caso com id {pk} não encontrado'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-
-
 def verificaBoletim(pk):
     # Verifica se o boletim existe
     try:
@@ -131,131 +112,6 @@ class CidadeDetail(mixins.RetrieveModelMixin,
             return resposta
 
         return self.retrieve(request, *args, **kwargs)
-
-
-# Caso
-class CasoList(mixins.ListModelMixin,
-               mixins.CreateModelMixin,
-               generics.GenericAPIView):
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = Caso.objects.all()
-    serializer_class = CasoSerializer
-
-    def get(self, request, *args, **kwargs):
-        """ Retorna a lista de casos cadastrados e ativos
-
-        Sem parâmetros de entrada
-        """
-
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        """ Cadastra um novo caso
-
-        Formato de entrada:
-        {
-            "boletim": int,
-            "tipo": string,
-            "genero": string,
-            "faixa": string,
-            "quantidade": int
-        }
-        """
-
-        return self.create(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return Caso.objects.filter(ativo=True)
-
-
-class CasoDetail(mixins.RetrieveModelMixin,
-                 mixins.UpdateModelMixin,
-                 generics.GenericAPIView):
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    queryset = Caso.objects.all()
-    serializer_class = CasoSerializer
-
-    def get(self, request, *args, **kwargs):
-        """ Retorna um caso cadastrado se ele estiver ativo
-
-        Sem parâmetros de entrada
-        """
-
-        resposta = verificaCaso(kwargs['pk'])
-
-        if resposta:
-            return resposta
-
-        return self.retrieve(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        """ Altera todos os campos de um caso se ele estiver ativo
-
-        Formato de entrada:
-        {
-            "boletim": int,
-            "tipo": string,
-            "genero": string,
-            "faixa": string,
-            "quantidade": int
-        }
-        """
-
-        resposta = verificaCaso(kwargs['pk'])
-
-        if resposta:
-            return resposta
-
-        return self.update(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        """ Altera os campos de um caso, mesmo que seja apenas 1, se ele \
-        estiver ativo
-
-        Formato de entrada:
-        {
-            "boletim": int,
-            "tipo": string,
-            "genero": string,
-            "faixa": string,
-            "quantidade": int
-        }
-
-        OBS: Essa rota também aceita apenas 1, ou mais, campos de entrada
-        """
-
-        resposta = verificaCaso(kwargs['pk'])
-
-        if resposta:
-            return resposta
-
-        return self.partial_update(request, *args, **kwargs)
-
-    def delete(self, request, pk):
-        """ Inativa um caso se ele estiver ativo
-
-        Sem parâmetros de entrada
-        """
-
-        resposta = verificaCaso(pk)
-
-        if resposta:
-            return resposta
-
-        caso = Caso.objects.get(pk=pk)
-
-        serializer = CasoSerializer(caso, data={'ativo': False}, partial=True)
-
-        if serializer.is_valid():
-            serializer.save()
-
-        return Response()
 
 
 # Usuario
@@ -535,6 +391,14 @@ class BoletimList(mixins.ListModelMixin,
         Formato de entrada:
         {
             "data": datetime,
+            "casosConfirmados": int,
+            "casosEmTratamento": int,
+            "casosInternados": int,
+            "casosRecuperados": int,
+            "casosSuspeitos": int,
+            "casosDeObito": int,
+            "casosDescartados": int,
+            "casosNotificados": int
         }
         """
 
@@ -572,6 +436,14 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         Formato de entrada:
         {
             "data": datetime,
+            "casosConfirmados": int,
+            "casosEmTratamento": int,
+            "casosInternados": int,
+            "casosRecuperados": int,
+            "casosSuspeitos": int,
+            "casosDeObito": int,
+            "casosDescartados": int,
+            "casosNotificados": int
         }
         """
 
@@ -586,11 +458,20 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         return self.update(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
-        """ Altera os campos de um caso se ele estiver ativo
+        """ Altera os campos de um boletim, mesmo que seja apenas 1, se ele \
+        estiver ativo
 
         Formato de entrada:
         {
             "data": datetime,
+            "casosConfirmados": int,
+            "casosEmTratamento": int,
+            "casosInternados": int,
+            "casosRecuperados": int,
+            "casosSuspeitos": int,
+            "casosDeObito": int,
+            "casosDescartados": int,
+            "casosNotificados": int
         }
         """
         resposta = verificaBoletim(kwargs['pk'])
@@ -621,9 +502,6 @@ class BoletimDetail(mixins.RetrieveModelMixin,
                                        partial=True)
 
         if serializer.is_valid():
-            casosRelacionados = Caso.objects.filter(boletim=boletim.id)
-            casosRelacionados.update(ativo=False)
-
             serializer.save()
 
         return Response()
