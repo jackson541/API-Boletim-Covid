@@ -26,8 +26,8 @@ class UsuarioTeste(APITestCase):
 
         self.usuario1 = Usuario.objects.create(user=user1, criador=self.user, cidade=self.cidade)
         self.usuario2 = Usuario.objects.create(user=user2, criador=self.user, cidade=self.cidade)
-        self.usuario2 = Usuario.objects.create(user=user3, criador=self.user, cidade=self.cidade)
-        self.usuario2 = Usuario.objects.create(user=user4, criador=self.user, cidade=self.cidade)
+        self.usuario3 = Usuario.objects.create(user=user3, criador=self.user, cidade=self.cidade)
+        self.usuario4 = Usuario.objects.create(user=user4, criador=self.user, cidade=self.cidade)
         
     ### GET
     def test_listar_usuarios(self):
@@ -41,10 +41,15 @@ class UsuarioTeste(APITestCase):
 
 
     def test_listar_um_usuario(self):
-        USUARIO_ID = 2
+        USUARIO_ID = self.usuario2.id
         url = reverse("read_update_delete_usuario", args=[USUARIO_ID])
 
-        RESPOSTA_ESPERADA = {'id': 2, 'user': 3, 'criador': 1, 'cidade': 1, 'ativo': True, 'username': 'testeListagem2'}
+        RESPOSTA_ESPERADA = {'id': self.usuario2.id, 
+                             'user': self.usuario2.user.id, 
+                             'criador': self.usuario2.criador.id, 
+                             'cidade': self.usuario2.cidade.id, 
+                             'ativo': True, 
+                             'username': 'testeListagem2'}
 
         response = self.client.get(url, format='json')
         self.assertEqual(response.data, RESPOSTA_ESPERADA)
@@ -73,7 +78,12 @@ class UsuarioTeste(APITestCase):
             "cidade": self.cidade.id
         }
 
-        RESPOSTA_ESPERADA = {'id': 5, 'user': 6, 'criador': 1, 'cidade': 1, 'ativo': True}
+        RESPOSTA_ESPERADA = {'id': (self.usuario4.id + 1), 
+                             'user': (self.usuario4.user.id + 1), 
+                             'criador': self.usuario4.criador.id, 
+                             'cidade': self.usuario4.cidade.id, 
+                             'ativo': True, 
+                             "username": "usuarioTeste"}
 
         response = self.client.post(url, usuario, format='json')
         self.assertEqual(response.data, RESPOSTA_ESPERADA)
@@ -135,7 +145,7 @@ class UsuarioTeste(APITestCase):
     
     #### PATCH
     def test_alterar_parcialmente_usuario(self):
-        USUARIO_ID = 3
+        USUARIO_ID = self.usuario3.id
         url = reverse("read_update_delete_usuario", args=[USUARIO_ID])
 
         novaCidade = Cidade.objects.create(nome="cidadeTeste3", numero_habitantes=10)
@@ -144,7 +154,7 @@ class UsuarioTeste(APITestCase):
             "cidade": novaCidade.id
         }
 
-        RESPOSTA_ESPERADA = {'id': 3, 'user': 4, 'criador': 1, 'cidade': 2, 'ativo': True}
+        RESPOSTA_ESPERADA = {'id': self.usuario3.id, 'user': self.usuario3.user.id, 'criador': self.usuario3.criador.id, 'cidade': novaCidade.id, 'ativo': True, 'username': 'testeListagem3'}
 
         response = self.client.patch(url, usuario, format='json')
         self.assertEqual(response.data, RESPOSTA_ESPERADA)
@@ -170,7 +180,7 @@ class UsuarioTeste(APITestCase):
 
     ### DELETE
     def test_delete_usuario(self):
-        USUARIO_ID = 4
+        USUARIO_ID = self.usuario4.id
         url = reverse("read_update_delete_usuario", args=[USUARIO_ID])
 
         response = self.client.delete(url, format='json')
