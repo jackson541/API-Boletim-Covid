@@ -2,8 +2,9 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
+import mock
 
-from .models import Cidade, Usuario, Caso
+from .models import Cidade, Usuario, Boletim
 
 '''
     OBS: o Django cria um db separado para os testes
@@ -108,7 +109,7 @@ class UsuarioTeste(APITestCase):
             "cidade": novaCidade.id
         }
 
-        RESPOSTA_ESPERADA = {'id': 1, 'user': 2, 'criador': 1, 'cidade': 2, 'ativo': True}
+        RESPOSTA_ESPERADA = {'id': 1, 'user': 2, 'criador': 1, 'cidade': 2, 'ativo': True, 'username': 'testeListagem1'}
 
         response = self.client.put(url, usuario, format='json')
         self.assertEqual(response.data, RESPOSTA_ESPERADA)
@@ -116,7 +117,7 @@ class UsuarioTeste(APITestCase):
 
 
     def test_alterar_completamente_usuario_negado(self):
-        USUARIO_ID = 2
+        USUARIO_ID = self.usuario2.id
         url = reverse("read_update_delete_usuario", args=[USUARIO_ID])
 
         novaCidade = Cidade.objects.create(nome="cidadeTeste2", numero_habitantes=10)
