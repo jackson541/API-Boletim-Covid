@@ -12,8 +12,18 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import django_heroku
 import os
 
+from boto.s3.connection import S3Connection
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+"""
+ATENÇÃO: Comente a linha abaixo na hora de desenvolver o comentário, ela serve
+         apenas para o heroku se comunicar com o banco de dados. Descomente 
+         quando for fazer deploy para a master.
+"""
+s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
 
 
 # Quick-start development settings - unsuitable for production
