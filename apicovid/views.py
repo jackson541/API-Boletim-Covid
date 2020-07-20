@@ -482,7 +482,7 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         usuario = Usuario.objects.get(user=request.user.id)
         request.data['cidade'] = usuario.cidade.id
 
-        return self.update(request, *args, **kwargs)
+        return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, pk):
         """ Inativa um boletim se ele estiver ativo

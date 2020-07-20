@@ -2,7 +2,6 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
-import mock
 
 from .models import Cidade, Usuario, Boletim
 
@@ -109,7 +108,7 @@ class UsuarioTeste(APITestCase):
     
     ### PUT
     def test_alterar_completamente_usuario(self):
-        USUARIO_ID = 1
+        USUARIO_ID = self.usuario1.id
         url = reverse("read_update_delete_usuario", args=[USUARIO_ID])
 
         novaCidade = Cidade.objects.create(nome="cidadeTeste2", numero_habitantes=10)
@@ -119,7 +118,12 @@ class UsuarioTeste(APITestCase):
             "cidade": novaCidade.id
         }
 
-        RESPOSTA_ESPERADA = {'id': 1, 'user': 2, 'criador': 1, 'cidade': 2, 'ativo': True, 'username': 'testeListagem1'}
+        RESPOSTA_ESPERADA = {'id': self.usuario1.id,
+                             'user': self.usuario1.user.id, 
+                             'criador': self.usuario1.criador.id, 
+                             'cidade': novaCidade.id,
+                             'ativo': True, 
+                             "username": "testeListagem1"}
 
         response = self.client.put(url, usuario, format='json')
         self.assertEqual(response.data, RESPOSTA_ESPERADA)
@@ -197,3 +201,258 @@ class UsuarioTeste(APITestCase):
         self.assertEqual(response.data, RESPOSTA_ESPERADA)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
+class BoletimTeste(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='teste', password='teste', is_staff=True)
+        self.cidade = Cidade.objects.create(nome="cidadeTeste", numero_habitantes=10)
+
+        Usuario.objects.create(user=self.user, criador=self.user, cidade=self.cidade)
+
+        #força autenticação para não precisa do token
+        self.client.force_authenticate(user=self.user)
+
+        ## boletins padrões para teste
+        self.boletim1 = Boletim.objects.create(cidade = self.cidade,
+                                                data = '2020-10-25 00:00:00',
+                                                casosConfirmados = 10,
+                                                casosEmTratamento = 10,
+                                                casosInternados = 10,
+                                                casosRecuperados = 10,
+                                                casosSuspeitos = 10,
+                                                casosDeObito = 10,
+                                                casosDescartados = 10,
+                                                casosNotificados = 10)
+
+        self.boletim2 = Boletim.objects.create(cidade = self.cidade,
+                                                data = '2020-10-25 00:00:00',
+                                                casosConfirmados = 10,
+                                                casosEmTratamento = 10,
+                                                casosInternados = 10,
+                                                casosRecuperados = 10,
+                                                casosSuspeitos = 10,
+                                                casosDeObito = 10,
+                                                casosDescartados = 10,
+                                                casosNotificados = 10)
+        
+    ### GET
+    def test_listar_boletins(self):
+        url = reverse("list_create_boletim")
+
+        NUM_BOLETINS_LISTADOS = 2
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(len(response.data), NUM_BOLETINS_LISTADOS)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    def test_listar_um_boletim(self):
+        BOLETIM_ID = self.boletim2.id
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        RESPOSTA_ESPERADA = {'id': self.boletim2.id, 
+                             'cidade': self.boletim2.cidade.id,
+                             'data': '2020-10-25T00:00:00Z',
+                             'casosConfirmados': 10,
+                             'casosEmTratamento': 10,
+                             'casosInternados': 10,
+                             'casosRecuperados': 10,
+                             'casosSuspeitos': 10,
+                             'casosDeObito': 10,
+                             'casosDescartados': 10,
+                             'casosNotificados': 10,
+                             'ativo': True}
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    def test_listar_um_boletim_negado(self):
+        BOLETIM_ID = 20
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        RESPOSTA_ESPERADA = {'error': 'boletim com id 20 não encontrado'}
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    ### POST
+    def test_criar_boletim(self):
+        url = reverse("list_create_boletim")
+
+        boletim = {
+            'cidade': self.cidade.id,
+            'data': '2020-10-26T00:00:00Z',
+            'casosConfirmados': 1,
+            'casosEmTratamento': 1,
+            'casosInternados': 1,
+            'casosRecuperados': 1,
+            'casosSuspeitos': 1,
+            'casosDeObito': 1,
+            'casosDescartados': 1,
+            'casosNotificados': 1,
+        }
+
+        RESPOSTA_ESPERADA = {'id': (self.boletim2.id + 1), 
+                             'cidade': self.cidade.id,
+                             'data': '2020-10-26T00:00:00Z',
+                             'casosConfirmados': 1,
+                             'casosEmTratamento': 1,
+                             'casosInternados': 1,
+                             'casosRecuperados': 1,
+                             'casosSuspeitos': 1,
+                             'casosDeObito': 1,
+                             'casosDescartados': 1,
+                             'casosNotificados': 1,
+                             'ativo': True}
+
+        response = self.client.post(url, boletim, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+    def test_criar_boletim_negado(self):
+        url = reverse("list_create_boletim")
+
+        boletim = {
+            'cidade': self.cidade.id,
+            'data': '',
+            'casosConfirmados': 1,
+            'casosEmTratamento': 1,
+            'casosInternados': 1,
+            'casosRecuperados': 1,
+            'casosSuspeitos': 1,
+            'casosDeObito': 1,
+            'casosDescartados': 1,
+            'casosNotificados': 1,
+        }
+
+        response = self.client.post(url, boletim, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    
+    ### PUT
+    def test_alterar_completamente_boletim(self):
+        BOLETIM_ID = self.boletim2.id
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        boletim = {
+            'data': '2021-10-26T00:00:00Z',
+            'casosConfirmados': 15,
+            'casosEmTratamento': 15,
+            'casosInternados': 15,
+            'casosRecuperados': 15,
+            'casosSuspeitos': 15,
+            'casosDeObito': 15,
+            'casosDescartados': 15,
+            'casosNotificados': 15,
+        }
+
+        RESPOSTA_ESPERADA = {
+            'id': self.boletim2.id,
+            'data': '2021-10-26T00:00:00Z',
+            'ativo': True,
+            'casosConfirmados': 15,
+            'casosEmTratamento': 15,
+            'casosInternados': 15,
+            'casosRecuperados': 15,
+            'casosSuspeitos': 15,
+            'casosDeObito': 15,
+            'casosDescartados': 15,
+            'casosNotificados': 15,
+            'cidade': self.cidade.id
+        }
+
+        response = self.client.put(url, boletim, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    def test_alterar_completamente_boletim_negado(self):
+        BOLETIM_ID = self.boletim2.id
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        novaCidade = Cidade.objects.create(nome="cidadeTeste2", numero_habitantes=10)
+
+        boletim = {
+            'cidade': novaCidade.id,
+            'data': '2021-10-26T00:00:00Z',
+            'casosConfirmados': 15,
+            'casosEmTratamento': 15,
+            'casosInternados': 15,
+            'casosRecuperados': -15,
+            'casosSuspeitos': 15,
+            'casosDeObito': 15,
+            'casosDescartados': 15,
+            'casosNotificados': 15,
+        }
+
+        response = self.client.put(url, boletim, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    
+    #### PATCH
+    def test_alterar_parcialmente_boletim(self):
+        BOLETIM_ID = self.boletim2.id
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        boletim = {
+            'casosRecuperados': 100,
+        }
+
+        RESPOSTA_ESPERADA = {
+            'id': self.boletim2.id,
+            'data': '2020-10-25T00:00:00Z',
+            'ativo': True,
+            'casosConfirmados': 10,
+            'casosEmTratamento': 10,
+            'casosInternados': 10,
+            'casosRecuperados': 100,
+            'casosSuspeitos': 10,
+            'casosDeObito': 10,
+            'casosDescartados': 10,
+            'casosNotificados': 10,
+            'cidade': self.boletim2.cidade.id
+        }
+
+        response = self.client.patch(url, boletim, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+    def test_alterar_parcialmente_boletim_negado(self):
+        BOLETIM_ID = 20
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        boletim = {
+            'casosRecuperados': 100,
+        }
+
+        RESPOSTA_ESPERADA = {'error': 'boletim com id 20 não encontrado'}
+
+        response = self.client.patch(url, boletim, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+    ### DELETE
+    def test_delete_boletim(self):
+        BOLETIM_ID = self.boletim1.id
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        response = self.client.delete(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    
+    def test_delete_boletim_negado(self):
+        BOLETIM_ID = 20
+        url = reverse("read_update_delete_boletim", args=[BOLETIM_ID])
+
+        RESPOSTA_ESPERADA = {'error': 'boletim com id 20 não encontrado'}
+
+        response = self.client.delete(url, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
