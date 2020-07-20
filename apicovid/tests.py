@@ -12,7 +12,12 @@ from .models import Cidade, Usuario, Boletim
 class UsuarioTeste(APITestCase):
     def setUp(self):
         self.user = User.objects.create(username='teste', password='teste', is_staff=True)
-        self.cidade = Cidade.objects.create(nome="cidadeTeste", numero_habitantes=10)
+        self.cidade = Cidade.objects.create(nome='cidadeTeste', numero_habitantes=10)
+
+        # cidades para teste
+        self.cidade1 = Cidade.objects.create(nome="Jucurutu", numero_habitantes=20000)
+        self.cidade2 = Cidade.objects.create(nome="Caicó", numero_habitantes=70000)
+        self.cidade3 = Cidade.objects.create(nome="São João do Sabugi", numero_habitantes=6200)
 
         #força autenticação para não precisa do token
         self.client.force_authenticate(user=self.user)
@@ -27,6 +32,44 @@ class UsuarioTeste(APITestCase):
         self.usuario2 = Usuario.objects.create(user=user2, criador=self.user, cidade=self.cidade)
         self.usuario3 = Usuario.objects.create(user=user3, criador=self.user, cidade=self.cidade)
         self.usuario4 = Usuario.objects.create(user=user4, criador=self.user, cidade=self.cidade)
+
+    def test_listar_cidades(self):
+        url = reverse("list_create_cidade")
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_listar_cidade3(self):
+        CIDADE_ID = self.cidade3.id
+        url = reverse("read_update_delete_cidade", args=[CIDADE_ID])
+
+        RESPOSTA_ESPERADA = {
+            'id': self.cidade3.id,   
+            'nome': "São João do Sabugi", 
+            'numero_habitantes': 6200,
+            'ativo': True
+        }
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_listar_cidade1(self):
+        CIDADE_ID = self.cidade1.id
+        url = reverse("read_update_delete_cidade", args=[CIDADE_ID])
+
+        RESPOSTA_ESPERADA = {
+            'id': self.cidade1.id,   
+            'nome': "Jucurutu", 
+            'numero_habitantes': 20000,
+            'ativo': True
+        }
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.data, RESPOSTA_ESPERADA)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         
     ### GET
     def test_listar_usuarios(self):
