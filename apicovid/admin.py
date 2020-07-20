@@ -14,9 +14,6 @@ def deletarCidade(modeladmin, request, queryset):
 
     listaIdsBoletins = boletins.values_list('id', flat=True)
 
-    casosRelacionados = Caso.objects.filter(boletim__in=listaIdsBoletins)
-    casosRelacionados.update(ativo=False)
-
 
 def restaurarCidade(modeladmin, request, queryset):
     listaIdsCidades = queryset.values_list('id', flat=True)
@@ -30,9 +27,6 @@ def restaurarCidade(modeladmin, request, queryset):
 
     listaIdsBoletins = boletins.values_list('id', flat=True)
 
-    casosRelacionados = Caso.objects.filter(boletim__in=listaIdsBoletins)
-    casosRelacionados.update(ativo=True)
-
 
 deletarCidade.short_description = "Marcar como inativa"
 restaurarCidade.short_description = "Marcar como ativa"
@@ -44,4 +38,3 @@ class CidadeAdmin(admin.ModelAdmin):
 admin.site.register(Usuario)
 admin.site.register(Cidade, CidadeAdmin)
 admin.site.register(Boletim)
-admin.site.register(Caso)
