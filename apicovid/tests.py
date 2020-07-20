@@ -9,7 +9,7 @@ from .models import Cidade, Usuario, Boletim
     OBS: o Django cria um db separado para os testes
 '''
 
-class UsuarioTeste(APITestCase):
+class CidadeTeste(APITestCase):
     def setUp(self):
         self.user = User.objects.create(username='teste', password='teste', is_staff=True)
         self.cidade = Cidade.objects.create(nome='cidadeTeste', numero_habitantes=10)
@@ -21,17 +21,6 @@ class UsuarioTeste(APITestCase):
 
         #força autenticação para não precisa do token
         self.client.force_authenticate(user=self.user)
-
-        ## usuários padrões para teste
-        user1 = User.objects.create(username='testeListagem1', password='teste')
-        user2 = User.objects.create(username='testeListagem2', password='teste')
-        user3 = User.objects.create(username='testeListagem3', password='teste')
-        user4 = User.objects.create(username='testeListagem4', password='teste')
-
-        self.usuario1 = Usuario.objects.create(user=user1, criador=self.user, cidade=self.cidade)
-        self.usuario2 = Usuario.objects.create(user=user2, criador=self.user, cidade=self.cidade)
-        self.usuario3 = Usuario.objects.create(user=user3, criador=self.user, cidade=self.cidade)
-        self.usuario4 = Usuario.objects.create(user=user4, criador=self.user, cidade=self.cidade)
 
     def test_listar_cidades(self):
         url = reverse("list_create_cidade")
@@ -70,6 +59,25 @@ class UsuarioTeste(APITestCase):
         self.assertEqual(response.data, RESPOSTA_ESPERADA)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
+class UsuarioTeste(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='teste', password='teste', is_staff=True)
+        self.cidade = Cidade.objects.create(nome='cidadeTeste', numero_habitantes=10)
+        
+        #força autenticação para não precisa do token
+        self.client.force_authenticate(user=self.user)
+
+        ## usuários padrões para teste
+        user1 = User.objects.create(username='testeListagem1', password='teste')
+        user2 = User.objects.create(username='testeListagem2', password='teste')
+        user3 = User.objects.create(username='testeListagem3', password='teste')
+        user4 = User.objects.create(username='testeListagem4', password='teste')
+
+        self.usuario1 = Usuario.objects.create(user=user1, criador=self.user, cidade=self.cidade)
+        self.usuario2 = Usuario.objects.create(user=user2, criador=self.user, cidade=self.cidade)
+        self.usuario3 = Usuario.objects.create(user=user3, criador=self.user, cidade=self.cidade)
+        self.usuario4 = Usuario.objects.create(user=user4, criador=self.user, cidade=self.cidade)
         
     ### GET
     def test_listar_usuarios(self):
