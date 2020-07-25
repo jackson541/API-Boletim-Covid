@@ -43,6 +43,23 @@ def verificaUsuarioEAutorizacao(request, pk):
                 )
 
 
+def verificaUsuarioPorUser(userId):
+    try:
+        usuario = Usuario.objects.get(user=userId)
+
+        if not usuario.ativo:
+            return Response(
+                    {'error': f'usuário com user {userId} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'usuário com user {userId} não encontrado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+
 def verificaCidade(pk):
     # Verifica se a cidade existe
     try:
@@ -377,6 +394,11 @@ class BoletimList(mixins.ListModelMixin,
         }
         """
 
+        resposta = verificaUsuarioPorUser(request.user.id)
+
+        if resposta:
+            return resposta
+
         usuario = Usuario.objects.get(user=request.user.id)
         request.data['cidade'] = usuario.cidade.id
 
@@ -423,7 +445,10 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         """
 
         resposta = verificaBoletim(kwargs['pk'])
+        if resposta:
+            return resposta
 
+        resposta = verificaUsuarioPorUser(request.user.id)
         if resposta:
             return resposta
 
@@ -450,7 +475,10 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         }
         """
         resposta = verificaBoletim(kwargs['pk'])
+        if resposta:
+            return resposta
 
+        resposta = verificaUsuarioPorUser(request.user.id)
         if resposta:
             return resposta
 
@@ -466,7 +494,10 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         """
 
         resposta = verificaBoletim(pk)
+        if resposta:
+            return resposta
 
+        resposta = verificaUsuarioPorUser(request.user.id)
         if resposta:
             return resposta
 
