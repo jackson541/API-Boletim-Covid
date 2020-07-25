@@ -13,6 +13,8 @@ from rest_framework.response import Response
 from rest_framework.authentication \
     import TokenAuthentication, BasicAuthentication
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+
 
 from .models import *
 from .serializers import *
@@ -351,6 +353,14 @@ class UsuarioDetail(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
+            if Token.objects.filter(user=usuario.user.id).exists():
+                token = Token.objects.get(user=usuario.user.id)
+                token.delete()
+
+            user = User.objects.get(pk=usuario.user.id)
+            user.is_active = False
+            user.save()
 
         return Response()
 
