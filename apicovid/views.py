@@ -10,7 +10,8 @@ from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication, BasicAuthentication
+from rest_framework.authentication \
+    import TokenAuthentication, BasicAuthentication
 from rest_framework import status
 
 from .models import *
@@ -138,8 +139,7 @@ class UsuarioList(APIView):
         Formato de entrada:
             {
                 "username": string,
-                "password": string,
-                "cidade": number
+                "password": string
             }
         """
         data = JSONParser().parse(request)
@@ -148,7 +148,7 @@ class UsuarioList(APIView):
         keys = list(data.keys())
         keys.sort()
 
-        camposEsperados = ['username', 'password', 'cidade']
+        camposEsperados = ['username', 'password']
         camposEsperados.sort()
 
         if not (keys == camposEsperados):
@@ -157,14 +157,6 @@ class UsuarioList(APIView):
                             'passe todos e somente os campos obrigatórios'},
                         status=status.HTTP_400_BAD_REQUEST
                     )
-
-        resposta = verificaCidade(data['cidade'])
-
-        # Verifica se alguma coisa foi retornada
-        if resposta:
-            return resposta
-
-        cidade = Cidade.objects.get(pk=data['cidade'])
 
         # Verifica as entradas de username e password
         try:
@@ -184,10 +176,12 @@ class UsuarioList(APIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
+        criador = Usuario.objects.get(user=request.user.id)
+
         data = {
             'user': usuario.id,
             'criador': request.user.id,
-            'cidade': cidade.id
+            'cidade': criador.cidade.id
         }
 
         serializer = UsuarioSerializer(data=data)
@@ -227,8 +221,7 @@ class UsuarioDetail(APIView):
 
         Formato de entrada:
         {
-            "password": string,
-            "cidade": int
+            "password": string
         }
         """
 
@@ -246,7 +239,7 @@ class UsuarioDetail(APIView):
         keys = list(data.keys())
         keys.sort()
 
-        camposEsperados = ['password', 'cidade']
+        camposEsperados = ['password']
         camposEsperados.sort()
 
         if not (keys == camposEsperados):
@@ -256,19 +249,13 @@ class UsuarioDetail(APIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-        resposta = verificaCidade(data['cidade'])
-
-        # Verifica se alguma coisa foi retornada
-        if resposta:
-            return resposta
-
-        cidade = Cidade.objects.get(pk=data['cidade'])
+        criador = Usuario.objects.get(user=request.user.id)
 
         data = {
             'user': usuario.user.id,
             'criador': usuario.criador.id,
             'password': data['password'],
-            'cidade': cidade.id
+            'cidade': criador.cidade.id
         }
 
         # Atualiza os campos do usuário passado
@@ -290,8 +277,7 @@ class UsuarioDetail(APIView):
 
         Formato de entrada:
         {
-            "password": string,
-            "cidade": int
+            "password": string
         }
 
         OBS: Essa rota também aceita apenas 1, ou mais, campos de entrada
@@ -306,18 +292,7 @@ class UsuarioDetail(APIView):
         usuario = Usuario.objects.get(pk=pk)
 
         data = JSONParser().parse(request)
-
-        if('cidade' in data):
-            resposta = verificaCidade(data['cidade'])
-
-            # Verifica se alguma coisa foi retornada
-            if resposta:
-                return resposta
-
-            cidade = Cidade.objects.get(pk=data['cidade'])
-
-        else:
-            cidade = usuario.cidade
+        cidade = usuario.cidade
 
         if ('password' in data):
             user = User.objects.get(pk=usuario.user.id)
@@ -327,7 +302,7 @@ class UsuarioDetail(APIView):
         data = {
             'user': usuario.user.id,
             'criador': request.user.id,
-            'cidade': cidade.id
+            'cidade': usuario.cidade.id
         }
 
         # Atualiza os campos do usuário passado
