@@ -23,7 +23,7 @@ ATENÇÃO: Comente a linha abaixo na hora de desenvolver o comentário, ela serv
          apenas para o heroku se comunicar com o banco de dados. Descomente 
          quando for fazer deploy para a master.
 """
-#s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
+s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
 
 
 # Quick-start development settings - unsuitable for production
