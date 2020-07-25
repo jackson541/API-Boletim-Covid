@@ -11,13 +11,14 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.authentication \
-    import TokenAuthentication, BasicAuthentication
+    import BasicAuthentication
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 
 
 from .models import *
 from .serializers import *
+from .authentication import ExpiringTokenAuthentication
 
 
 # Funções para verificação
@@ -136,7 +137,7 @@ class CidadeDetail(mixins.RetrieveModelMixin,
 
 # Usuario
 class UsuarioList(APIView):
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
@@ -214,7 +215,7 @@ class UsuarioList(APIView):
 
 
 class UsuarioDetail(APIView):
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, pk):
@@ -370,7 +371,7 @@ class BoletimList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
                   generics.GenericAPIView):
 
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     queryset = Boletim.objects.all()
@@ -418,7 +419,7 @@ class BoletimList(mixins.ListModelMixin,
 class BoletimDetail(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     queryset = Boletim.objects.all()
