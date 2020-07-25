@@ -64,6 +64,8 @@ class UsuarioTeste(APITestCase):
     def setUp(self):
         self.user = User.objects.create(username='teste', password='teste', is_staff=True)
         self.cidade = Cidade.objects.create(nome='cidadeTeste', numero_habitantes=10)
+
+        Usuario.objects.create(user=self.user, criador=self.user, cidade=self.cidade)
         
         #força autenticação para não precisa do token
         self.client.force_authenticate(user=self.user)
@@ -83,7 +85,7 @@ class UsuarioTeste(APITestCase):
     def test_listar_usuarios(self):
         url = reverse("list_create_usuario")
 
-        NUM_CASOS_LISTADOS = 4
+        NUM_CASOS_LISTADOS = 5
 
         response = self.client.get(url, format='json')
         self.assertEqual(len(response.data), NUM_CASOS_LISTADOS)
@@ -124,8 +126,7 @@ class UsuarioTeste(APITestCase):
 
         usuario = {
             "username": "usuarioTeste",
-            "password": "aaa",
-            "cidade": self.cidade.id
+            "password": "aaa"
         }
 
         RESPOSTA_ESPERADA = {'id': (self.usuario4.id + 1), 
@@ -146,8 +147,7 @@ class UsuarioTeste(APITestCase):
 
         usuario = {
             "username": "",
-            "password": "aaa",
-            "cidade": self.cidade.id
+            "password": "aaa"
         }
 
         RESPOSTA_ESPERADA = {'error': 'valor do username ou password não informado ou incorreto'}
@@ -162,22 +162,11 @@ class UsuarioTeste(APITestCase):
         USUARIO_ID = self.usuario1.id
         url = reverse("read_update_delete_usuario", args=[USUARIO_ID])
 
-        novaCidade = Cidade.objects.create(nome="cidadeTeste2", numero_habitantes=10)
-
         usuario = {
-            "password": "senhaTeste",
-            "cidade": novaCidade.id
+            "password": "senhaTeste2"
         }
 
-        RESPOSTA_ESPERADA = {'id': self.usuario1.id,
-                             'user': self.usuario1.user.id, 
-                             'criador': self.usuario1.criador.id, 
-                             'cidade': novaCidade.id,
-                             'ativo': True, 
-                             "username": "testeListagem1"}
-
         response = self.client.put(url, usuario, format='json')
-        self.assertEqual(response.data, RESPOSTA_ESPERADA)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -203,16 +192,11 @@ class UsuarioTeste(APITestCase):
         USUARIO_ID = self.usuario3.id
         url = reverse("read_update_delete_usuario", args=[USUARIO_ID])
 
-        novaCidade = Cidade.objects.create(nome="cidadeTeste3", numero_habitantes=10)
-
         usuario = {
-            "cidade": novaCidade.id
+            "password": "senhaDeTeste"
         }
 
-        RESPOSTA_ESPERADA = {'id': self.usuario3.id, 'user': self.usuario3.user.id, 'criador': self.usuario3.criador.id, 'cidade': novaCidade.id, 'ativo': True, 'username': 'testeListagem3'}
-
         response = self.client.patch(url, usuario, format='json')
-        self.assertEqual(response.data, RESPOSTA_ESPERADA)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
