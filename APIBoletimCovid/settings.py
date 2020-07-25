@@ -103,12 +103,8 @@ DATABASES = {
 }
 
 #Django-rest configs
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication'    
-    ]
-}
+#expira após 30 minutos
+TOKEN_EXPIRED_AFTER_SECONDS = 1800
 
 
 # Password validation

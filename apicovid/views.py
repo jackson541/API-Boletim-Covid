@@ -11,11 +11,14 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.authentication \
-    import TokenAuthentication, BasicAuthentication
+    import BasicAuthentication
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+
 
 from .models import *
 from .serializers import *
+from .authentication import ExpiringTokenAuthentication
 
 
 # Funções para verificação
@@ -40,6 +43,23 @@ def verificaUsuarioEAutorizacao(request, pk):
                     {'error':
                         'Você não tem autorização para editar esse usuário'},
                     status=status.HTTP_401_UNAUTHORIZED
+                )
+
+
+def verificaUsuarioPorUser(userId):
+    try:
+        usuario = Usuario.objects.get(user=userId)
+
+        if not usuario.ativo:
+            return Response(
+                    {'error': f'usuário com user {userId} foi deletado'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+    except ObjectDoesNotExist:
+        return Response(
+                    {'error': f'usuário com user {userId} não encontrado'},
+                    status=status.HTTP_404_NOT_FOUND
                 )
 
 
@@ -117,7 +137,7 @@ class CidadeDetail(mixins.RetrieveModelMixin,
 
 # Usuario
 class UsuarioList(APIView):
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request):
@@ -195,7 +215,7 @@ class UsuarioList(APIView):
 
 
 class UsuarioDetail(APIView):
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, pk):
@@ -335,6 +355,14 @@ class UsuarioDetail(APIView):
         if serializer.is_valid():
             serializer.save()
 
+            if Token.objects.filter(user=usuario.user.id).exists():
+                token = Token.objects.get(user=usuario.user.id)
+                token.delete()
+
+            user = User.objects.get(pk=usuario.user.id)
+            user.is_active = False
+            user.save()
+
         return Response()
 
 
@@ -343,7 +371,7 @@ class BoletimList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
                   generics.GenericAPIView):
 
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     queryset = Boletim.objects.all()
@@ -377,6 +405,11 @@ class BoletimList(mixins.ListModelMixin,
         }
         """
 
+        resposta = verificaUsuarioPorUser(request.user.id)
+
+        if resposta:
+            return resposta
+
         usuario = Usuario.objects.get(user=request.user.id)
         request.data['cidade'] = usuario.cidade.id
 
@@ -386,7 +419,7 @@ class BoletimList(mixins.ListModelMixin,
 class BoletimDetail(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     generics.GenericAPIView):
-    authentication_classes = [TokenAuthentication, BasicAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     queryset = Boletim.objects.all()
@@ -423,7 +456,10 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         """
 
         resposta = verificaBoletim(kwargs['pk'])
+        if resposta:
+            return resposta
 
+        resposta = verificaUsuarioPorUser(request.user.id)
         if resposta:
             return resposta
 
@@ -450,7 +486,10 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         }
         """
         resposta = verificaBoletim(kwargs['pk'])
+        if resposta:
+            return resposta
 
+        resposta = verificaUsuarioPorUser(request.user.id)
         if resposta:
             return resposta
 
@@ -466,7 +505,10 @@ class BoletimDetail(mixins.RetrieveModelMixin,
         """
 
         resposta = verificaBoletim(pk)
+        if resposta:
+            return resposta
 
+        resposta = verificaUsuarioPorUser(request.user.id)
         if resposta:
             return resposta
 
