@@ -1,4 +1,4 @@
-name: Django CI
+name: API-Boletim-Covid
 
 on:
   push:
