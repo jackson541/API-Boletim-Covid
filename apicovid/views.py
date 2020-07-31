@@ -219,22 +219,29 @@ class UsuarioDetail(APIView):
     permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, pk):
-        """ Retorna um usuário criado pelo administrador que fez a \
-        requisição
+        """ Retorna um usuário
 
-        Sem parâmetros de entrada
+        Necessário passar uma query 'username' com o username do usuário.
+        Qualquer ID pode ser informado na rota.
         """
+        if not ("username" in request.query_params):
+            return Response(
+                {'error': 'Forneça o username para buscar o usuário'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        resposta = verificaUsuarioEAutorizacao(request, pk)
+        username = request.query_params['username']
+        try:
+            usuario = Usuario.objects.get(user__username=username, ativo=True)
+            serializer = UsuarioSerializer(usuario)
 
-        # Verifica se alguma coisa foi retornada
-        if resposta:
-            return resposta
-
-        usuario = Usuario.objects.get(pk=pk)
-        serializer = UsuarioSerializer(usuario)
-
-        return Response(serializer.data)
+            return Response(serializer.data)
+        
+        except:
+            return Response(
+                {'error': 'usuário não encontrado'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     def put(self, request, pk):
         """ Altera todos os campos de um usuário se ele estiver ativo
