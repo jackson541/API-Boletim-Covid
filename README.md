@@ -4,6 +4,8 @@ API em Djangorestframework para acompanhar o número de casos do Covid-19 na reg
 
 ![Deploy](https://www.herokucdn.com/deploy/button.svg)
 
+![API-Boletim-Covid](https://github.com/jackson541/API-Boletim-Covid/workflows/API-Boletim-Covid/badge.svg?branch=master)
+
 ![](https://img.shields.io/badge/API--Boletim--Covid-v1.0-red?style=for-the-badge)
 
 
