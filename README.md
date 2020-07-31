@@ -2,6 +2,8 @@
 
 API em Djangorestframework para acompanhar o número de casos do Covid-19 na região do Seridó.
 
+![Deploy](https://www.herokucdn.com/deploy/button.svg)
+
 ![](https://img.shields.io/badge/API--Boletim--Covid-v1.0-red?style=for-the-badge)
 
 
