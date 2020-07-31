@@ -380,13 +380,21 @@ class BoletimList(mixins.ListModelMixin,
     def get(self, request, *args, **kwargs):
         """ Retorna a lista de boletins cadastrados e ativos
 
-        Sem parâmetros de entrada
+        Necessário passar uma query 'cidade' com o ID da cidade que deseja ter \
+        os boletins
         """
 
-        return self.list(request, *args, **kwargs)
+        if 'cidade' in request.query_params:
+            return self.list(request, *args, **kwargs)
+        
+        return Response(
+            {'error': 'Forneça uma cidade para buscar os boletins'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     def get_queryset(self):
-        return Boletim.objects.filter(ativo=True)
+        cidadeId = self.request.query_params['cidade']
+        return Boletim.objects.filter(ativo=True, cidade=cidadeId)
 
     def post(self, request, *args, **kwargs):
         """ Cadastra um novo boletim
