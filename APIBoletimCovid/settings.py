@@ -65,7 +65,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Confirgurações do CORS
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = True
 
 ROOT_URLCONF = 'APIBoletimCovid.urls'
 
