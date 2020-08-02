@@ -108,7 +108,7 @@ DATABASES = {
 
 #Django-rest configs
 #expira após 30 minutos
-TOKEN_EXPIRED_AFTER_SECONDS = 1800
+TOKEN_EXPIRED_AFTER_SECONDS = 60
 
 
 # Password validation
