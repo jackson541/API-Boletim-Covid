@@ -216,7 +216,7 @@ class UsuarioList(APIView):
 
 class UsuarioDetail(APIView):
     authentication_classes = [ExpiringTokenAuthentication, BasicAuthentication]
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, pk):
         """ Retorna um usuário
